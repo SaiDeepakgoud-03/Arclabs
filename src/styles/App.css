@@ -1,0 +1,88 @@
+/* ── PAGE ACTION HEADER ───────────────────── */
+
+.page-action-bar {
+  width: 100%;
+  padding: 16px 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #060a16;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* left side (logo) */
+
+.page-action-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-action-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: #e6e9ef;
+}
+
+.page-action-logo-dot {
+  width: 10px;
+  height: 10px;
+  background: #9bff2e;
+  border-radius: 50%;
+}
+
+/* breadcrumb navigation */
+
+.page-action-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 0.85rem;
+  color: #9aa3b2;
+}
+
+.page-action-nav a {
+  color: #9aa3b2;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.page-action-nav a:hover {
+  color: #ffffff;
+}
+
+.page-action-nav .active {
+  color: #ffffff;
+}
+
+/* right action button */
+
+.page-action-button {
+  background: linear-gradient(135deg, #9bff2e, #73f07c);
+  border: none;
+  padding: 12px 22px;
+  border-radius: 10px;
+
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+
+  color: #071015;
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.page-action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(155, 255, 46, 0.35);
+}

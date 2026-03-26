@@ -1,0 +1,1601 @@
+import { useState, useEffect, useRef } from "react";
+
+/* ═══════════════════════════════════════ STYLES ═══════════════════════════════════════ */
+const css = `
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060612;--deep:#0A0A1A;--panel:#0F0F22;--card:#13132A;--card2:#181832;--raised:#1D1D3A;
+  --line:rgba(255,255,255,0.06);--line2:rgba(255,255,255,0.11);--line3:rgba(255,255,255,0.18);
+  --snow:#EEEEFF;--fog:#7878A0;--mist:#AAABCC;
+  --teal:#00E8D4;--lime:#7DFF6B;--gold:#FFD166;--violet:#A855F7;--rose:#FF5C87;--amber:#FFA843;
+  --teal-g:rgba(0,232,212,0.12);--lime-g:rgba(125,255,107,0.10);--gold-g:rgba(255,209,102,0.12);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--snow);font-family:'DM Sans',sans-serif;line-height:1.65;overflow-x:hidden;min-height:100vh}
+::selection{background:var(--teal);color:var(--bg)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--teal);border-radius:2px}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 15%,rgba(0,232,212,0.05) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 55% at 85% 85%,rgba(125,255,107,0.04) 0%,transparent 65%),
+    linear-gradient(rgba(255,255,255,0.013) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.013) 1px,transparent 1px);
+  background-size:100% 100%,100% 100%,50px 50px,50px 50px;
+}
+
+/* NAV */
+.vnav{position:sticky;top:0;z-index:300;height:64px;padding:0 5vw;display:flex;align-items:center;justify-content:space-between;background:rgba(6,6,18,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
+.vnav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;color:var(--snow);text-decoration:none;display:flex;align-items:center;gap:8px}
+.vdot{width:8px;height:8px;background:var(--teal);border-radius:50%;animation:dp 2s ease-in-out infinite}
+@keyframes dp{0%,100%{box-shadow:0 0 0 0 rgba(0,232,212,.5)}50%{box-shadow:0 0 0 7px rgba(0,232,212,0)}}
+.vnav-links{display:flex;align-items:center;gap:1.2rem}
+.vnav-link{font-size:.8rem;color:var(--fog);text-decoration:none;transition:color .2s}
+.vnav-link:hover{color:var(--snow)}
+
+/* HERO */
+.vhero{padding:64px 5vw 48px;text-align:center;position:relative;z-index:1}
+.vhero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:800px;height:360px;pointer-events:none;background:radial-gradient(ellipse,rgba(0,232,212,0.06) 0%,rgba(125,255,107,0.03) 40%,transparent 70%)}
+.vtag{display:inline-flex;align-items:center;gap:7px;background:rgba(0,232,212,.07);border:1px solid rgba(0,232,212,.2);border-radius:100px;padding:5px 15px;margin-bottom:1.5rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--teal);letter-spacing:.1em}
+.vtdot{width:5px;height:5px;background:var(--teal);border-radius:50%;animation:dp 1.5s ease-in-out infinite}
+.vhero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.035em;line-height:1.06;margin-bottom:.9rem}
+.vhero h1 em{font-style:normal;color:var(--teal)}
+.vhero p{color:var(--fog);font-size:.95rem;font-weight:300;max-width:460px;margin:0 auto;line-height:1.8}
+
+/* TABS */
+.mtabs{display:flex;justify-content:center;gap:.5rem;padding:2rem 5vw 0;position:relative;z-index:1;flex-wrap:wrap}
+.mtab{display:flex;align-items:center;gap:8px;padding:11px 26px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--fog);font-size:.87rem;font-weight:500;cursor:pointer;transition:all .25s;font-family:'DM Sans',sans-serif}
+.mtab.active{background:rgba(0,232,212,.08);border-color:var(--teal);color:var(--teal)}
+.mtab:hover:not(.active){color:var(--mist)}
+
+/* CONTENT */
+.vcontent{padding:2.5rem 5vw 80px;position:relative;z-index:1;max-width:860px;margin:0 auto;width:100%}
+
+/* ─── VERIFY PANEL ─── */
+.vcard{background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:32px}
+.vcard-eye{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--teal);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem}
+.vcard-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;letter-spacing:-.025em;margin-bottom:.35rem}
+.vcard-sub{font-size:.84rem;color:var(--fog);margin-bottom:1.7rem;line-height:1.65}
+
+.srow{display:flex;gap:.7rem;flex-wrap:wrap}
+.cert-inp{flex:1;min-width:200px;background:var(--card2);border:1px solid var(--line2);border-radius:10px;color:var(--snow);font-family:'JetBrains Mono',monospace;font-size:1rem;padding:13px 17px;outline:none;letter-spacing:.14em;text-transform:uppercase;transition:border-color .2s}
+.cert-inp::placeholder{text-transform:none;letter-spacing:0;font-family:'DM Sans',sans-serif;font-size:.87rem;opacity:.5}
+.cert-inp:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,232,212,.07)}
+.btn-v{background:var(--teal);color:var(--bg);font-weight:700;font-size:.9rem;padding:13px 26px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .22s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.btn-v:hover{box-shadow:0 4px 18px var(--teal-g);transform:translateY(-1px)}
+.btn-v:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+.demo-hint{margin-top:.9rem;padding:10px 14px;background:rgba(255,209,102,.05);border:1px solid rgba(255,209,102,.15);border-radius:8px;font-size:.76rem;color:var(--fog)}
+.demo-id{background:none;border:none;color:var(--teal);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.07em;padding:0 3px;transition:opacity .15s}
+.demo-id:hover{opacity:.7}
+
+.verr{background:rgba(255,92,135,.06);border:1px solid rgba(255,92,135,.22);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:10px;font-size:.84rem;color:#FF8FAD;margin-top:1rem;animation:fadein .25s ease}
+
+.vsuccess-badge{display:flex;align-items:center;gap:11px;background:rgba(125,255,107,.06);border:1px solid rgba(125,255,107,.2);border-radius:12px;padding:14px 18px;margin-bottom:1.2rem;animation:fadein .3s ease}
+.vsb-icon{font-size:1.5rem}
+.vsb-text strong{display:block;color:var(--lime);font-size:.9rem;margin-bottom:2px}
+.vsb-text span{font-size:.79rem;color:var(--mist)}
+
+/* ─── DIGITAL CERTIFICATE ─── */
+.dcert{background:var(--card2);border:1px solid var(--line2);border-radius:20px;overflow:hidden;position:relative;animation:fadein .4s ease}
+.dcert-topbar{height:5px;background:linear-gradient(90deg,var(--teal),var(--lime),var(--gold))}
+.dcert-inner{padding:36px 38px}
+@media(max-width:580px){.dcert-inner{padding:22px 18px}}
+
+.dc-wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-15deg);font-family:'Syne',sans-serif;font-weight:800;font-size:7rem;opacity:.018;color:var(--teal);letter-spacing:-.05em;pointer-events:none;white-space:nowrap}
+
+.dc-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
+.dc-brand{display:flex;align-items:center;gap:9px}
+.dc-brand-dot{width:9px;height:9px;background:var(--teal);border-radius:50%}
+.dc-brand-name{font-family:'Syne',sans-serif;font-weight:800;font-size:.97rem}
+.dc-brand-tag{font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--fog);letter-spacing:.07em;margin-top:1px}
+.dc-id-chip{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--teal);background:rgba(0,232,212,.08);border:1px solid rgba(0,232,212,.2);padding:5px 13px;border-radius:6px;letter-spacing:.1em}
+
+.dc-center{text-align:center;margin-bottom:1.8rem;position:relative;z-index:1}
+.dc-certifies{font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;color:var(--mist);margin-bottom:.4rem}
+.dc-name{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.9rem,5vw,3rem);letter-spacing:-.02em;color:var(--snow);line-height:1.1;margin-bottom:.6rem}
+.dc-completed{font-size:.88rem;color:var(--mist);font-style:italic}
+.dc-completed strong{font-style:normal;color:var(--teal);font-weight:700}
+
+.dc-prog{background:linear-gradient(135deg,rgba(0,232,212,.07),rgba(125,255,107,.05));border:1px solid rgba(0,232,212,.14);border-radius:13px;padding:17px 22px;margin-bottom:1.8rem;text-align:center;position:relative;z-index:1}
+.dc-prog-lbl{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem}
+.dc-prog-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;letter-spacing:-.02em;color:var(--teal)}
+.dc-prog-sub{font-size:.78rem;color:var(--mist);margin-top:.3rem}
+
+.dc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:1.8rem;position:relative;z-index:1}
+.dc-cell{background:var(--card);padding:13px 16px}
+.dc-cell-k{font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--fog);letter-spacing:.09em;text-transform:uppercase;margin-bottom:4px}
+.dc-cell-v{font-size:.83rem;font-weight:600;color:var(--snow);line-height:1.35}
+
+.dc-skills{margin-bottom:1.8rem;position:relative;z-index:1}
+.dc-skills-lbl{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.7rem}
+.dc-chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.dc-chip{font-size:.72rem;padding:4px 11px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid var(--line2);color:var(--mist)}
+.dc-chip.hi{background:rgba(0,232,212,.08);border-color:rgba(0,232,212,.22);color:var(--teal)}
+
+.dc-ft{display:flex;justify-content:space-between;align-items:flex-end;padding-top:1.5rem;border-top:1px solid var(--line);flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
+.dc-sig{text-align:center}
+.dc-sig-line{width:110px;height:1px;background:var(--line2);margin:0 auto .35rem}
+.dc-sig-name{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700}
+.dc-sig-role{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--fog);letter-spacing:.06em}
+.dc-seal{width:60px;height:60px;border-radius:50%;border:2px solid rgba(0,232,212,.25);display:flex;align-items:center;justify-content:center;font-size:1.6rem;background:rgba(0,232,212,.04)}
+
+.cert-acts{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+.btn-act{display:flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;text-decoration:none}
+.btn-act.primary{background:var(--teal);color:var(--bg);border:none}
+.btn-act.primary:hover{box-shadow:0 4px 16px var(--teal-g);transform:translateY(-1px)}
+.btn-act.ghost{background:transparent;color:var(--mist);border:1px solid var(--line2)}
+.btn-act.ghost:hover{color:var(--snow);border-color:var(--line3)}
+
+/* ─── REGISTER PANEL ─── */
+.rcard{background:var(--card);border:1px solid var(--line2);border-radius:20px;overflow:hidden}
+.rcard-hd{padding:26px 30px 20px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,rgba(0,232,212,.04),rgba(125,255,107,.02))}
+.rcard-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;margin-bottom:.3rem}
+.rcard-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-.025em}
+.live-pill{display:flex;align-items:center;gap:6px;background:rgba(125,255,107,.08);border:1px solid rgba(125,255,107,.2);border-radius:6px;padding:4px 11px;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--lime);letter-spacing:.07em}
+.live-dot{width:5px;height:5px;background:var(--lime);border-radius:50%;animation:dp 1.5s ease-in-out infinite}
+.rcard-sub{font-size:.82rem;color:var(--fog)}
+.rcard-body{padding:26px 30px 30px}
+@media(max-width:580px){.rcard-hd,.rcard-body{padding-left:18px;padding-right:18px}}
+
+/* Progress steps */
+.pbar{display:flex;align-items:center;gap:0;margin-bottom:2rem}
+.pbar-seg{height:3px;flex:1;background:var(--line2);transition:background .35s;border-radius:2px}
+.pbar-seg.done{background:var(--lime)}
+.pbar-seg.active{background:var(--teal);animation:glow .9s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:none}to{box-shadow:0 0 8px var(--teal)}}
+.pbar-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--fog);transition:all .3s;flex-shrink:0;background:var(--card)}
+.pbar-dot.done{border-color:var(--lime);color:var(--lime);background:rgba(125,255,107,.08)}
+.pbar-dot.active{border-color:var(--teal);color:var(--teal);background:rgba(0,232,212,.08)}
+
+.slbl{font-family:'JetBrains Mono',monospace;font-size:.61rem;color:var(--fog);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.4rem}
+.slbl strong{color:var(--teal)}
+
+/* Form fields */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.85rem}
+@media(max-width:540px){.fg{grid-template-columns:1fr}}
+.fr{margin-bottom:.85rem}
+.fl{display:flex;gap:.5rem;align-items:center;font-size:.73rem;font-weight:600;color:var(--mist);margin-bottom:5px;letter-spacing:.02em}
+.fl-hint{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--fog);font-weight:400}
+.fi,.fs,.fta{width:100%;background:var(--card2);border:1px solid var(--line2);border-radius:9px;color:var(--snow);font-family:'DM Sans',sans-serif;font-size:.87rem;padding:11px 13px;outline:none;transition:all .2s;-webkit-appearance:none}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,232,212,.07)}
+.fi.loading{border-color:var(--gold);animation:loadp 1s ease-in-out infinite}
+@keyframes loadp{0%,100%{border-color:rgba(255,209,102,.35)}50%{border-color:var(--gold)}}
+.fi.ok{border-color:var(--lime)}
+.fi.err{border-color:var(--rose)}
+.fs option{background:var(--card2)}
+.fta{resize:vertical;min-height:68px}
+.fhint{font-size:.69rem;color:var(--fog);margin-top:4px}
+.fhint.ok{color:var(--lime)}
+.fhint.err{color:var(--rose)}
+
+/* Pincode */
+.pin-wrap{position:relative}
+.pin-spin{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;border:2px solid var(--line2);border-top-color:var(--gold);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
+.pin-ok{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--lime);font-size:.9rem;font-weight:700}
+
+/* Tech selector */
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:.55rem;margin-bottom:.85rem}
+.tech-opt{padding:9px 11px;border-radius:9px;border:1px solid var(--line2);background:var(--card2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;font-size:.79rem;font-weight:500;color:var(--fog)}
+.tech-opt:hover{border-color:var(--line3);color:var(--mist)}
+.tech-opt.sel{border-color:var(--teal);background:rgba(0,232,212,.08);color:var(--teal)}
+.tech-opt-icon{font-size:.95rem;flex-shrink:0}
+
+/* Duration pills */
+.dpills{display:flex;gap:.45rem;flex-wrap:wrap}
+.dpill{padding:8px 16px;border-radius:7px;border:1px solid var(--line2);background:var(--card2);cursor:pointer;transition:all .2s;font-size:.81rem;font-weight:500;color:var(--fog);font-family:'DM Sans',sans-serif}
+.dpill:hover{color:var(--mist);border-color:var(--line3)}
+.dpill.sel{border-color:var(--teal);background:rgba(0,232,212,.08);color:var(--teal)}
+
+/* Performance */
+.pfbtns{display:flex;gap:.45rem;flex-wrap:wrap}
+.pfbtn{padding:8px 16px;border-radius:7px;border:1px solid var(--line2);background:var(--card2);cursor:pointer;font-size:.8rem;font-weight:500;color:var(--fog);transition:all .2s;font-family:'DM Sans',sans-serif}
+.pfbtn.s-excellent{border-color:var(--lime);background:rgba(125,255,107,.08);color:var(--lime)}
+.pfbtn.s-good{border-color:var(--teal);background:rgba(0,232,212,.08);color:var(--teal)}
+.pfbtn.s-satisfactory{border-color:var(--gold);background:rgba(255,209,102,.08);color:var(--gold)}
+.pfbtn.s-basic{border-color:var(--amber);background:rgba(255,168,67,.08);color:var(--amber)}
+
+/* Inst type */
+.itypebtn{padding:8px 15px;border-radius:7px;border:1px solid var(--line2);background:var(--card2);cursor:pointer;transition:all .2s;font-size:.8rem;font-weight:500;color:var(--fog);font-family:'DM Sans',sans-serif}
+.itypebtn.sel{border-color:var(--violet);background:rgba(168,85,247,.08);color:var(--violet)}
+
+/* Nav */
+.rnav{display:flex;justify-content:space-between;align-items:center;margin-top:1.8rem;flex-wrap:wrap;gap:.8rem}
+.btn-next{background:var(--teal);color:var(--bg);font-weight:700;font-size:.9rem;padding:12px 24px;border-radius:9px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .22s;display:flex;align-items:center;gap:7px}
+.btn-next:hover{box-shadow:0 4px 18px var(--teal-g);transform:translateY(-1px)}
+.btn-next:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-bk{background:transparent;color:var(--fog);font-size:.87rem;padding:12px 18px;border-radius:9px;border:1px solid var(--line2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-bk:hover{color:var(--snow);border-color:var(--line3)}
+
+/* Preview box */
+.preview-box{background:rgba(0,232,212,.04);border:1px solid rgba(0,232,212,.14);border-radius:12px;padding:15px 17px;margin-top:.5rem;margin-bottom:.5rem}
+.pb-lbl{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.7rem}
+.pb-row{display:flex;justify-content:space-between;font-size:.78rem;padding:5px 0;border-bottom:1px solid var(--line)}
+.pb-row:last-child{border-bottom:none}
+.pb-k{color:var(--fog)}
+.pb-v{color:var(--snow);font-weight:500}
+
+/* ─── SUCCESS ─── */
+.succ-wrap{text-align:center;padding:16px 0;animation:fadein .45s ease}
+.succ-icon{font-size:3.2rem;display:block;margin-bottom:1rem}
+.succ-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.45rem;letter-spacing:-.025em;color:var(--lime);margin-bottom:.45rem}
+.succ-sub{font-size:.86rem;color:var(--fog);margin-bottom:1.8rem;line-height:1.7;max-width:420px;margin-left:auto;margin-right:auto}
+
+.cid-box{background:linear-gradient(135deg,rgba(0,232,212,.08),rgba(125,255,107,.06));border:1px solid rgba(0,232,212,.24);border-radius:16px;padding:26px;max-width:380px;margin:0 auto 1.4rem}
+.cid-lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--fog);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.55rem}
+.cid-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:2.1rem;letter-spacing:.18em;color:var(--teal);margin-bottom:.6rem}
+.cid-copy{display:inline-flex;align-items:center;gap:6px;background:rgba(0,232,212,.1);color:var(--teal);font-size:.77rem;padding:5px 14px;border-radius:6px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s}
+.cid-copy:hover{background:rgba(0,232,212,.16)}
+.cid-copy.cp{color:var(--lime)}
+
+.mini-cert{background:var(--card2);border:1px solid var(--line2);border-radius:11px;padding:15px 18px;text-align:left;margin-bottom:1.2rem;max-width:440px;margin-left:auto;margin-right:auto}
+.mc-row{display:flex;justify-content:space-between;font-size:.79rem;padding:5px 0;border-bottom:1px solid var(--line)}
+.mc-row:last-child{border-bottom:none}
+.mc-k{color:var(--fog)}
+.mc-v{color:var(--snow);font-weight:500;text-align:right;max-width:60%}
+
+.succ-acts{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap}
+
+/* ─── RECENT LIST ─── */
+.recent-sec{margin-top:1.8rem}
+.recent-lbl{font-family:'JetBrains Mono',monospace;font-size:.61rem;color:var(--fog);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.9rem;display:flex;align-items:center;gap:8px}
+.recent-lbl::before{content:'—';opacity:.4}
+.recent-list{display:flex;flex-direction:column;gap:.45rem}
+.ri{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;cursor:pointer;transition:all .2s}
+.ri:hover{border-color:var(--line2);background:var(--card2)}
+.ri-l{display:flex;align-items:center;gap:10px}
+.ri-ico{font-size:1.1rem}
+.ri-cid{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--teal);letter-spacing:.08em}
+.ri-name{font-size:.82rem;font-weight:500;color:var(--snow)}
+.ri-r{font-size:.73rem;color:var(--fog)}
+
+/* UTILS */
+@keyframes fadein{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--lime);color:var(--bg);font-weight:700;font-size:.82rem;padding:10px 22px;border-radius:8px;z-index:999;font-family:'DM Sans',sans-serif;animation:fadein .28s ease;white-space:nowrap}
+
+/* FOOTER */
+.vfoot{border-top:1px solid var(--line);padding:20px 5vw;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;font-size:.74rem;color:var(--fog);position:relative;z-index:1}
+.wa-f{position:fixed;bottom:22px;right:22px;width:48px;height:48px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:1.3rem;cursor:pointer;z-index:99;text-decoration:none;box-shadow:0 4px 16px rgba(37,211,102,.33);animation:wab 3s ease-in-out infinite}
+@keyframes wab{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+`;
+
+/* ═══════════════════════════════════════ DATA ═══════════════════════════════════════ */
+const TECHNOLOGIES = [
+  { id: "IoT", label: "Internet of Things", icon: "🌐" },
+  { id: "Embedded", label: "Embedded Systems", icon: "⚙️" },
+  { id: "IIoT", label: "Industrial IoT", icon: "🏭" },
+  { id: "Robotics", label: "Robotics", icon: "🤖" },
+  { id: "IoRT", label: "Internet of Robotic Things", icon: "🦾" },
+  { id: "AIoT", label: "AI of Things", icon: "🧠" },
+  { id: "AIoRT", label: "AI Robotic Things", icon: "🦿" },
+  { id: "AdvIoT", label: "Advanced IoT", icon: "🚀" },
+];
+
+const DURATIONS = [
+  { val: "2", label: "2 Days", sub: "Workshop · 14 hrs" },
+  { val: "3", label: "3 Days", sub: "Intensive · 21 hrs" },
+  { val: "5", label: "5 Days", sub: "Bootcamp · 35 hrs" },
+];
+
+const CERTIFICATE = [
+  "Coordination",
+  "Participation",
+  "Excellence",
+  "Internship",
+];
+
+const STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Delhi",
+  "Jammu & Kashmir",
+  "Ladakh",
+  "Puducherry",
+  "Chandigarh",
+  "Andaman & Nicobar",
+];
+
+// Pincode map — first 3 digits → city/state
+const PIN_MAP = {
+  500: { c: "Hyderabad", s: "Telangana" },
+  501: { c: "Hyderabad", s: "Telangana" },
+  502: { c: "Hyderabad", s: "Telangana" },
+  503: { c: "Hyderabad", s: "Telangana" },
+  504: { c: "Adilabad", s: "Telangana" },
+  505: { c: "Karimnagar", s: "Telangana" },
+  506: { c: "Warangal", s: "Telangana" },
+  507: { c: "Khammam", s: "Telangana" },
+  508: { c: "Nalgonda", s: "Telangana" },
+  509: { c: "Mahbubnagar", s: "Telangana" },
+  515: { c: "Anantapur", s: "Andhra Pradesh" },
+  516: { c: "Cuddapah", s: "Andhra Pradesh" },
+  517: { c: "Chittoor", s: "Andhra Pradesh" },
+  518: { c: "Kurnool", s: "Andhra Pradesh" },
+  520: { c: "Vijayawada", s: "Andhra Pradesh" },
+  521: { c: "Vijayawada", s: "Andhra Pradesh" },
+  522: { c: "Guntur", s: "Andhra Pradesh" },
+  523: { c: "Prakasam", s: "Andhra Pradesh" },
+  524: { c: "Nellore", s: "Andhra Pradesh" },
+  530: { c: "Visakhapatnam", s: "Andhra Pradesh" },
+  531: { c: "Visakhapatnam", s: "Andhra Pradesh" },
+  532: { c: "Srikakulam", s: "Andhra Pradesh" },
+  533: { c: "East Godavari", s: "Andhra Pradesh" },
+  560: { c: "Bengaluru", s: "Karnataka" },
+  561: { c: "Bengaluru Rural", s: "Karnataka" },
+  562: { c: "Bengaluru", s: "Karnataka" },
+  570: { c: "Mysuru", s: "Karnataka" },
+  575: { c: "Mangaluru", s: "Karnataka" },
+  580: { c: "Dharwad", s: "Karnataka" },
+  590: { c: "Belagavi", s: "Karnataka" },
+  600: { c: "Chennai", s: "Tamil Nadu" },
+  601: { c: "Chennai", s: "Tamil Nadu" },
+  602: { c: "Tiruvallur", s: "Tamil Nadu" },
+  603: { c: "Kanchipuram", s: "Tamil Nadu" },
+  620: { c: "Tiruchirappalli", s: "Tamil Nadu" },
+  625: { c: "Madurai", s: "Tamil Nadu" },
+  641: { c: "Coimbatore", s: "Tamil Nadu" },
+  682: { c: "Ernakulam", s: "Kerala" },
+  695: { c: "Thiruvananthapuram", s: "Kerala" },
+  400: { c: "Mumbai", s: "Maharashtra" },
+  401: { c: "Thane", s: "Maharashtra" },
+  411: { c: "Pune", s: "Maharashtra" },
+  420: { c: "Nashik", s: "Maharashtra" },
+  440: { c: "Nagpur", s: "Maharashtra" },
+  380: { c: "Ahmedabad", s: "Gujarat" },
+  390: { c: "Vadodara", s: "Gujarat" },
+  395: { c: "Surat", s: "Gujarat" },
+  110: { c: "New Delhi", s: "Delhi" },
+  111: { c: "New Delhi", s: "Delhi" },
+  112: { c: "New Delhi", s: "Delhi" },
+  302: { c: "Jaipur", s: "Rajasthan" },
+  313: { c: "Udaipur", s: "Rajasthan" },
+  700: { c: "Kolkata", s: "West Bengal" },
+  711: { c: "Howrah", s: "West Bengal" },
+  226: { c: "Lucknow", s: "Uttar Pradesh" },
+  208: { c: "Kanpur", s: "Uttar Pradesh" },
+  282: { c: "Agra", s: "Uttar Pradesh" },
+  160: { c: "Chandigarh", s: "Chandigarh" },
+  380: { c: "Ahmedabad", s: "Gujarat" },
+  248: { c: "Dehradun", s: "Uttarakhand" },
+  781: { c: "Guwahati", s: "Assam" },
+  452: { c: "Indore", s: "Madhya Pradesh" },
+  462: { c: "Bhopal", s: "Madhya Pradesh" },
+  800: { c: "Patna", s: "Bihar" },
+};
+
+const SKILLS_MAP = {
+  IoT: [
+    "ESP32 Programming",
+    "MQTT Protocol",
+    "Sensor Interfacing",
+    "AWS IoT Core",
+    "Cloud Dashboard",
+    "Node-RED",
+  ],
+  Embedded: [
+    "C/C++ Programming",
+    "GPIO Control",
+    "I2C/SPI/UART",
+    "FreeRTOS",
+    "STM32 HAL",
+    "Peripheral Drivers",
+  ],
+  IIoT: [
+    "PLC Basics",
+    "Modbus Protocol",
+    "SCADA Systems",
+    "OPC-UA",
+    "Industrial Sensors",
+    "RS485",
+  ],
+  Robotics: [
+    "Arduino Programming",
+    "Motor Control",
+    "Obstacle Avoidance",
+    "Servo Control",
+    "Autonomous Navigation",
+    "Line Following",
+  ],
+  IoRT: [
+    "ROS Basics",
+    "MQTT for Robots",
+    "Cloud Robot Control",
+    "Telemetry",
+    "ROS2 Topics",
+    "Multi-Robot",
+  ],
+  AIoT: [
+    "TinyML",
+    "Edge Impulse",
+    "TensorFlow Lite",
+    "Edge Inference",
+    "Anomaly Detection",
+    "Raspberry Pi AI",
+  ],
+  AIoRT: [
+    "YOLOv8",
+    "ROS2 Integration",
+    "Vision-Guided Robots",
+    "Decision AI",
+    "MoveIt",
+    "Cloud AI",
+  ],
+  AdvIoT: [
+    "Scalable Architecture",
+    "LoRaWAN",
+    "Digital Twins",
+    "InfluxDB",
+    "Kafka",
+    "IoT DevOps",
+  ],
+};
+
+const GRADE = { Excellent: "A+", Good: "A", Satisfactory: "B", Basic: "C" };
+
+const SAMPLE_CERTS = {
+  ARC4F2K: {
+    certId: "ARC4F2K",
+    fullName: "Ravi Kumar Reddy",
+    phone: "9876543210",
+    email: "ravi@example.com",
+    institutionType: "college",
+    institution: "JNTU College of Engineering, Hyderabad",
+    trainingDate: "2025-01-15",
+    pincode: "500085",
+    city: "Hyderabad",
+    state: "Telangana",
+    technology: "IoT",
+    durationDays: 5,
+    performance: "Excellent",
+    projectTitle: "Smart Agriculture Monitoring System",
+    trainer: "Er. Suresh Babu",
+    skills: [
+      "ESP32 Programming",
+      "MQTT Protocol",
+      "AWS IoT Core",
+      "Sensor Interfacing",
+      "Cloud Dashboard",
+    ],
+    issueDate: "2025-01-20",
+    grade: "A+",
+    status: "ACTIVE",
+  },
+  ARC7K9P: {
+    certId: "ARC7K9P",
+    fullName: "Priya Sharma",
+    phone: "8765432109",
+    email: "priya@example.com",
+    institutionType: "school",
+    institution: "Delhi Public School, Secunderabad",
+    trainingDate: "2025-02-10",
+    pincode: "500015",
+    city: "Secunderabad",
+    state: "Telangana",
+    technology: "Robotics",
+    durationDays: 3,
+    performance: "Good",
+    projectTitle: "Obstacle Avoiding Robot",
+    trainer: "Er. Anitha Rao",
+    skills: [
+      "Arduino Programming",
+      "Motor Control",
+      "Obstacle Avoidance",
+      "Autonomous Navigation",
+    ],
+    issueDate: "2025-02-13",
+    grade: "A",
+    status: "ACTIVE",
+  },
+  ARCM3XQ: {
+    certId: "ARCM3XQ",
+    fullName: "Mohammed Irfan",
+    phone: "7654321098",
+    email: "irfan@example.com",
+    institutionType: "college",
+    institution: "Osmania University, Hyderabad",
+    trainingDate: "2025-03-05",
+    pincode: "500007",
+    city: "Hyderabad",
+    state: "Telangana",
+    technology: "AIoT",
+    durationDays: 5,
+    performance: "Excellent",
+    projectTitle: "Edge AI Predictive Maintenance System",
+    trainer: "Er. Ramesh Chandra",
+    skills: [
+      "TinyML",
+      "Edge Impulse",
+      "TensorFlow Lite",
+      "Raspberry Pi",
+      "Anomaly Detection",
+      "Cloud Integration",
+    ],
+    issueDate: "2025-03-10",
+    grade: "A+",
+    status: "ACTIVE",
+  },
+};
+
+/* ═══════════════════════════════════════ HELPERS ═══════════════════════════════════════ */
+function genCertId() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return (
+    "ARC" +
+    Array.from(
+      { length: 4 },
+      () => chars[Math.floor(Math.random() * chars.length)],
+    ).join("")
+  );
+}
+
+function lookupPin(pin) {
+  if (pin.length < 3) return null;
+  return PIN_MAP[pin.slice(0, 3)] || null;
+}
+
+function fmtDate(d) {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function getSkills(tech, days) {
+  const all = SKILLS_MAP[tech] || [
+    "IoT Fundamentals",
+    "Sensor Programming",
+    "Cloud Integration",
+  ];
+  if (days >= 5) return all;
+  if (days === 3) return all.slice(0, 4);
+  return all.slice(0, 3);
+}
+
+function getTechObj(id) {
+  return TECHNOLOGIES.find((t) => t.id === id) || { id, label: id, icon: "🔧" };
+}
+
+function getDurLabel(days) {
+  if (days == 2) return "2-Day Workshop";
+  if (days == 3) return "3-Day Intensive";
+  return "5-Day Bootcamp";
+}
+
+function getHours(days) {
+  const h = { 2: 14, 3: 21, 5: 35 };
+  return (h[days] || days * 7) + " Hours";
+}
+
+/* ═══════════════════════════════════════ CERT CARD ═══════════════════════════════════════ */
+function CertCard({ cert }) {
+  const tech = getTechObj(cert.technology);
+  return (
+    <div className="dcert">
+      <div className="dc-wm">ARC LABS</div>
+      <div className="dcert-topbar" />
+      <div className="dcert-inner">
+        {/* Header */}
+        <div className="dc-hd">
+          <div className="dc-brand">
+            <div className="dc-brand-dot" />
+            <div>
+              <div className="dc-brand-name">ARC LABS</div>
+              <div className="dc-brand-tag">
+                MSME REGISTERED · HYDERABAD, INDIA
+              </div>
+            </div>
+          </div>
+          <div className="dc-id-chip">
+            <span style={{ opacity: 0.55, marginRight: 3 }}>#</span>
+            {cert.certId}
+          </div>
+        </div>
+
+        {/* Name */}
+        <div className="dc-center">
+          <div className="dc-certifies">This is to certify that</div>
+          <div className="dc-name">{cert.fullName}</div>
+          <div className="dc-completed">
+            has successfully completed the{" "}
+            <strong>
+              {getDurLabel(cert.durationDays)} in {tech.label}
+            </strong>{" "}
+            {/* with Grade{" "}
+            <strong
+              style={{
+                color:
+                  cert.grade === "A+"
+                    ? "var(--lime)"
+                    : cert.grade === "A"
+                      ? "var(--teal)"
+                      : "var(--gold)",
+              }}
+            >
+              {cert.grade}
+            </strong>{" "}
+            — {cert.performance} Performance */}
+          </div>
+        </div>
+
+        {/* Program */}
+        <div className="dc-prog">
+          <div className="dc-prog-lbl">Program Completed</div>
+          <div className="dc-prog-name">
+            {tech.icon} {tech.label}
+          </div>
+          <div className="dc-prog-sub">
+            {getDurLabel(cert.durationDays)}
+            {/* · {getHours(cert.durationDays)} of
+            Practical Training */}
+          </div>
+        </div>
+
+        {/* Details grid */}
+        <div className="dc-grid">
+          {[
+            { k: "Student Name", v: cert.fullName },
+            { k: "Phone Number", v: cert.phone },
+            { k: "Institution", v: cert.institution },
+            {
+              k: "Institution Type",
+              v:
+                cert.institutionType?.charAt(0).toUpperCase() +
+                cert.institutionType?.slice(1),
+            },
+            { k: "Training Date", v: fmtDate(cert.trainingDate) },
+            { k: "Certificate Issued", v: fmtDate(cert.issueDate) },
+            { k: "City / State", v: `${cert.city}, ${cert.state}` },
+            { k: "PIN Code", v: cert.pincode },
+            { k: "Technology", v: cert.technology },
+            {
+              k: "Duration",
+              v: `${cert.durationDays} Days (${getHours(cert.durationDays)})`,
+            },
+            {
+              k: "Certificate Type",
+              v: `${cert.performance}`,
+            },
+
+            { k: "Trainer", v: cert.trainer || "ARC LABS Certified Trainer" },
+            { k: "Certificate Status", v: "✓ ACTIVE & VERIFIED" },
+          ].map((d) => (
+            <div className="dc-cell" key={d.k}>
+              <div className="dc-cell-k">{d.k}</div>
+              <div
+                className="dc-cell-v"
+                style={
+                  d.k === "Certificate Status" ? { color: "var(--lime)" } : {}
+                }
+              >
+                {d.v}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Skills */}
+        <div className="dc-skills">
+          <div className="dc-skills-lbl">
+            Skills & Competencies Demonstrated
+          </div>
+          <div className="dc-chips">
+            {cert.skills.map((s, i) => (
+              <span key={s} className={`dc-chip${i < 2 ? " hi" : ""}`}>
+                {s}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="dc-ft">
+          <div className="dc-sig">
+            <div className="dc-sig-line" />
+            <div className="dc-sig-name">
+              {cert.trainer || "ARC LABS Trainer"}
+            </div>
+            <div className="dc-sig-role">CERTIFIED TRAINER · ARC LABS</div>
+          </div>
+          <div className="dc-seal">🏛️</div>
+          <div className="dc-sig">
+            <div className="dc-sig-line" />
+            <div className="dc-sig-name">ARC LABS Academy</div>
+            <div className="dc-sig-role">DIRECTOR · CERTIFICATION PROGRAM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════ VERIFY TAB ═══════════════════════════════════════ */
+function VerifyTab({ allCerts, onSuccess }) {
+  const [q, setQ] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
+  const [toast, setToast] = useState("");
+
+  const doVerify = (id) => {
+    const sid = (id || q).trim().toUpperCase();
+    if (!sid) return;
+    setLoading(true);
+    setError("");
+    setResult(null);
+    setTimeout(() => {
+      const cert = allCerts[sid];
+      if (cert) {
+        setResult(cert);
+        onSuccess && onSuccess(cert);
+      } else
+        setError(
+          `No certificate found with ID "${sid}". Check the ID and try again.`,
+        );
+      setLoading(false);
+    }, 850);
+  };
+
+  const copy = () => {
+    navigator.clipboard.writeText(result?.certId || "").catch(() => {});
+    setToast("Certificate ID copied!");
+    setTimeout(() => setToast(""), 2000);
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.3rem" }}>
+      <div className="vcard">
+        <div className="vcard-eye">Certificate Verification</div>
+        <div className="vcard-title">Verify Authenticity</div>
+        <div className="vcard-sub">
+          Enter the ARC LABS Certificate ID (7 characters, e.g. ARC4F2K) to
+          instantly verify and view the complete certificate record.
+        </div>
+        <div className="srow">
+          <input
+            className="cert-inp"
+            placeholder="Enter Certificate ID — e.g. ARC4F2K"
+            value={q}
+            maxLength={9}
+            onChange={(e) => setQ(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === "Enter" && doVerify()}
+          />
+          <button
+            className="btn-v"
+            onClick={() => doVerify()}
+            disabled={loading || !q.trim()}
+          >
+            {loading ? "⏳ Verifying..." : "🔍 Verify"}
+          </button>
+        </div>
+        {/* <div className="demo-hint">
+          <strong style={{ color: "var(--gold)" }}>Demo IDs to try:</strong>{" "}
+          {Object.keys(allCerts).map((id, i) => (
+            <span key={id}>
+              <button
+                className="demo-id"
+                onClick={() => {
+                  setQ(id);
+                  doVerify(id);
+                }}
+              >
+                {id}
+              </button>
+              {i < Object.keys(allCerts).length - 1 ? " · " : ""}
+            </span>
+          ))}
+        </div> */}
+      </div>
+
+      {error && <div className="verr">❌ {error}</div>}
+
+      {result && (
+        <div style={{ animation: "fadein .4s ease" }}>
+          <div className="vsuccess-badge">
+            <span className="vsb-icon">✅</span>
+            <div className="vsb-text">
+              <strong>Certificate Verified — Authentic & Active</strong>
+              <span>
+                Issued by ARC LABS · Certificate ID:{" "}
+                <span
+                  style={{
+                    fontFamily: "monospace",
+                    letterSpacing: ".05em",
+                    color: "var(--teal)",
+                  }}
+                >
+                  {result.certId}
+                </span>
+              </span>
+            </div>
+          </div>
+          <CertCard cert={result} />
+          <div className="cert-acts" style={{ marginTop: "1rem" }}>
+            <button className="btn-act primary" onClick={copy}>
+              📋 Copy Certificate ID
+            </button>
+            <button className="btn-act ghost" onClick={() => window.print()}>
+              🖨️ Print
+            </button>
+            <a
+              className="btn-act ghost"
+              href={`https://wa.me/?text=My ARC LABS Certificate: ${result.certId} — Verify at arclabs.in/verify`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              💬 Share
+            </a>
+          </div>
+        </div>
+      )}
+
+      {toast && <div className="toast">✓ {toast}</div>}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════ REGISTER TAB ═══════════════════════════════════════ */
+function RegisterTab({ onRegistered }) {
+  const STEPS = 3;
+  const [step, setStep] = useState(1);
+  const [pinStatus, setPinStatus] = useState("idle");
+  const [submitting, setSubmitting] = useState(false);
+  const [issued, setIssued] = useState(null);
+  const [toast, setToast] = useState("");
+  const [form, setForm] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    institutionType: "college",
+    institution: "",
+    trainingDate: "",
+    pincode: "",
+    city: "",
+    state: "",
+    technology: "",
+    durationDays: "",
+    performance: "",
+    projectTitle: "",
+    trainer: "",
+    achievement: "",
+    notes: "",
+  });
+
+  const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+
+  /* Pincode auto-fetch using India Post API + fallback to local map */
+  const handlePin = async (pin) => {
+    set("pincode", pin);
+    if (pin.length === 6) {
+      setPinStatus("loading");
+      set("city", "");
+      set("state", "");
+      try {
+        // Try India Post API
+        const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+        const data = await res.json();
+        if (data[0]?.Status === "Success" && data[0]?.PostOffice?.length > 0) {
+          const po = data[0].PostOffice[0];
+          set("city", po.District || po.Block || po.Name);
+          set("state", po.State);
+          setPinStatus("found");
+          return;
+        }
+      } catch (e) {
+        /* fallback */
+      }
+      // Local map fallback
+      const found = lookupPin(pin);
+      if (found) {
+        set("city", found.c);
+        set("state", found.s);
+        setPinStatus("found");
+      } else {
+        setPinStatus("notfound");
+      }
+    } else {
+      setPinStatus("idle");
+      if (pin.length < 6) {
+        set("city", "");
+        set("state", "");
+      }
+    }
+  };
+
+  const step1ok =
+    form.fullName.trim() &&
+    form.phone.trim().length >= 10 &&
+    form.institution.trim() &&
+    form.trainingDate &&
+    form.pincode.length === 6 &&
+    form.city &&
+    form.state;
+  const step2ok = form.technology && form.durationDays;
+  const step3ok = form.performance;
+
+  const submit = () => {
+    if (!step3ok) return;
+    setSubmitting(true);
+    setTimeout(() => {
+      const certId = genCertId();
+      const days = parseInt(form.durationDays);
+      const skills = getSkills(form.technology, days);
+      const grade = GRADE[form.performance] || "B";
+      const issueDate = new Date().toISOString().split("T")[0];
+      const cert = {
+        ...form,
+        certId,
+        durationDays: days,
+        skills,
+        grade,
+        issueDate,
+        status: "ACTIVE",
+      };
+      onRegistered(cert);
+      setIssued(cert);
+      setSubmitting(false);
+    }, 1800);
+  };
+
+  const copyId = () => {
+    navigator.clipboard.writeText(issued?.certId || "").catch(() => {});
+    setToast("Copied!");
+    setTimeout(() => setToast(""), 2000);
+  };
+
+  const reset = () => {
+    setIssued(null);
+    setStep(1);
+    setPinStatus("idle");
+    setForm({
+      fullName: "",
+      phone: "",
+      email: "",
+      institutionType: "college",
+      institution: "",
+      trainingDate: "",
+      pincode: "",
+      city: "",
+      state: "",
+      technology: "",
+      durationDays: "",
+      performance: "",
+      projectTitle: "",
+      trainer: "",
+      achievement: "",
+      notes: "",
+    });
+  };
+
+  /* ─── SUCCESS ─── */
+  if (issued) {
+    const tech = getTechObj(issued.technology);
+    return (
+      <div className="rcard">
+        <div className="rcard-body">
+          <div className="succ-wrap">
+            <span className="succ-icon">🎓</span>
+            <div className="succ-title">Certificate Registered!</div>
+            <p className="succ-sub">
+              Your ARC LABS certificate has been officially registered. Save
+              your Certificate ID — share it with employers, institutions, or
+              anywhere credentials matter.
+            </p>
+
+            <div className="cid-box">
+              <div className="cid-lbl">Your Certificate ID</div>
+              <div className="cid-val">{issued.certId}</div>
+              <button
+                className={`cid-copy${toast ? " cp" : ""}`}
+                onClick={copyId}
+              >
+                {toast ? "✓ Copied!" : "📋 Copy ID"}
+              </button>
+            </div>
+
+            <div className="mini-cert">
+              {[
+                ["Full Name", issued.fullName],
+                ["Technology", `${tech.icon} ${issued.technology}`],
+                ["Program", getDurLabel(issued.durationDays)],
+                ["Training Date", fmtDate(issued.trainingDate)],
+                ["Institution", issued.institution],
+                ["City / State", `${issued.city}, ${issued.state}`],
+                ["Grade", `${issued.grade} — ${issued.performance}`],
+                ["Issue Date", fmtDate(issued.issueDate)],
+              ].map(([k, v]) => (
+                <div className="mc-row" key={k}>
+                  <span className="mc-k">{k}</span>
+                  <span className="mc-v">{v}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="succ-acts">
+              <button
+                className="btn-act primary"
+                onClick={() => window.location.reload()}
+              >
+                🔍 Verify My Certificate
+              </button>
+              <button className="btn-act ghost" onClick={reset}>
+                + Register Another
+              </button>
+            </div>
+          </div>
+        </div>
+        {toast && <div className="toast">✓ {toast}</div>}
+      </div>
+    );
+  }
+
+  /* ─── FORM ─── */
+  return (
+    <div className="rcard">
+      <div className="rcard-hd">
+        <div className="rcard-top">
+          <div className="rcard-title">Register Your Certificate</div>
+          <div className="live-pill">
+            <span className="live-dot" />
+            LIVE SYSTEM
+          </div>
+        </div>
+        <div className="rcard-sub">
+          Fill in your training details to receive a unique 7-character
+          Certificate ID. This ID verifies your credential across institutions
+          and employers.
+        </div>
+      </div>
+      <div className="rcard-body">
+        {/* Progress */}
+        <div className="pbar">
+          {[1, 2, 3].map((n, i) => (
+            <>
+              <div
+                key={`d${n}`}
+                className={`pbar-dot${step > n ? "done" : step === n ? " active" : ""}`}
+              >
+                {step > n ? "✓" : n}
+              </div>
+              {i < 2 && (
+                <div
+                  key={`s${n}`}
+                  className={`pbar-seg${step > n + 1 ? " done" : step === n + 1 ? " active" : ""}`}
+                />
+              )}
+            </>
+          ))}
+        </div>
+        <div className="slbl">
+          Step <strong>{step}</strong> of {STEPS} —{" "}
+          {step === 1
+            ? "Personal & Institution Details"
+            : step === 2
+              ? "Training Information"
+              : "Performance & Extras"}
+        </div>
+
+        {/* ─── STEP 1 ─── */}
+        {step === 1 && (
+          <>
+            <div className="fg">
+              <div className="fr">
+                <div className="fl">
+                  Full Name<span style={{ color: "var(--rose)" }}>*</span>
+                </div>
+                <input
+                  className="fi"
+                  placeholder="As it should appear on certificate"
+                  value={form.fullName}
+                  onChange={(e) => set("fullName", e.target.value)}
+                />
+              </div>
+              <div className="fr">
+                <div className="fl">
+                  Phone Number<span style={{ color: "var(--rose)" }}>*</span>
+                </div>
+                <input
+                  className="fi"
+                  type="tel"
+                  placeholder="10-digit mobile number"
+                  value={form.phone}
+                  onChange={(e) =>
+                    set("phone", e.target.value.replace(/\D/g, "").slice(0, 10))
+                  }
+                  maxLength={10}
+                />
+              </div>
+              <div className="fr">
+                <div className="fl">Email Address</div>
+                <input
+                  className="fi"
+                  type="email"
+                  placeholder="Optional — for soft copy"
+                  value={form.email}
+                  onChange={(e) => set("email", e.target.value)}
+                />
+              </div>
+              <div className="fr">
+                <div className="fl">
+                  Training / Completion Date{" "}
+                  <span style={{ color: "var(--rose)" }}>*</span>
+                </div>
+                <input
+                  className="fi"
+                  type="date"
+                  value={form.trainingDate}
+                  onChange={(e) => set("trainingDate", e.target.value)}
+                  max={new Date().toISOString().split("T")[0]}
+                />
+              </div>
+            </div>
+
+            <div className="fr">
+              <div className="fl">Institution Type</div>
+              <div style={{ display: "flex", gap: ".45rem", flexWrap: "wrap" }}>
+                {[
+                  "school",
+                  "college",
+                  "university",
+                  "corporate",
+                  "individual",
+                ].map((t) => (
+                  <button
+                    key={t}
+                    className={`itypebtn${form.institutionType === t ? " sel" : ""}`}
+                    onClick={() => set("institutionType", t)}
+                  >
+                    {t === "school"
+                      ? "🏫"
+                      : t === "college"
+                        ? "🏛️"
+                        : t === "university"
+                          ? "🎓"
+                          : t === "corporate"
+                            ? "🏢"
+                            : "👤"}{" "}
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="fr">
+              <div className="fl">
+                School / College / Institution Name{" "}
+                <span style={{ color: "var(--rose)" }}>*</span>
+              </div>
+              <input
+                className="fi"
+                placeholder="Full official name of your institution"
+                value={form.institution}
+                onChange={(e) => set("institution", e.target.value)}
+              />
+            </div>
+
+            {/* Pincode */}
+            <div className="fg">
+              <div className="fr">
+                <div className="fl">
+                  PIN Code <span style={{ color: "var(--rose)" }}>*</span>
+                  <span className="fl-hint">Auto-fills city & state</span>
+                </div>
+                <div className="pin-wrap">
+                  <input
+                    className={`fi${pinStatus === "loading" ? " loading" : pinStatus === "found" ? " ok" : pinStatus === "notfound" ? " err" : ""}`}
+                    placeholder="6-digit PIN code"
+                    value={form.pincode}
+                    maxLength={6}
+                    onChange={(e) =>
+                      handlePin(e.target.value.replace(/\D/g, ""))
+                    }
+                  />
+                  {pinStatus === "loading" && <div className="pin-spin" />}
+                  {pinStatus === "found" && <div className="pin-ok">✓</div>}
+                </div>
+                {pinStatus === "found" && (
+                  <div className="fhint ok">
+                    ✓ Location auto-filled from PIN code
+                  </div>
+                )}
+                {pinStatus === "notfound" && (
+                  <div className="fhint err">
+                    PIN not found — please fill city & state manually
+                  </div>
+                )}
+              </div>
+              <div className="fr">
+                <div className="fl">
+                  City <span style={{ color: "var(--rose)" }}>*</span>
+                </div>
+                <input
+                  className="fi"
+                  placeholder="Your city"
+                  value={form.city}
+                  onChange={(e) => set("city", e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="fr">
+              <div className="fl">
+                State <span style={{ color: "var(--rose)" }}>*</span>
+              </div>
+              <select
+                className="fs"
+                value={form.state}
+                onChange={(e) => set("state", e.target.value)}
+              >
+                <option value="">Select your state</option>
+                {STATES.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="rnav">
+              <span />
+              <button
+                className="btn-next"
+                onClick={() => setStep(2)}
+                disabled={!step1ok}
+              >
+                Next → Training Info
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* ─── STEP 2 ─── */}
+        {step === 2 && (
+          <>
+            <div className="fr">
+              <div className="fl">
+                Technology Enrolled In{" "}
+                <span style={{ color: "var(--rose)" }}>*</span>
+              </div>
+              <div className="tech-grid">
+                {TECHNOLOGIES.map((t) => (
+                  <div
+                    key={t.id}
+                    className={`tech-opt${form.technology === t.id ? " sel" : ""}`}
+                    onClick={() => set("technology", t.id)}
+                  >
+                    <span className="tech-opt-icon">{t.icon}</span>
+                    <span>{t.id}</span>
+                  </div>
+                ))}
+              </div>
+              {form.technology && (
+                <div className="fhint ok">
+                  ✓ {getTechObj(form.technology).label}
+                </div>
+              )}
+            </div>
+
+            <div className="fr">
+              <div className="fl">
+                Training Duration{" "}
+                <span style={{ color: "var(--rose)" }}>*</span>
+              </div>
+              <div className="dpills">
+                {DURATIONS.map((d) => (
+                  <button
+                    key={d.val}
+                    className={`dpill${form.durationDays === d.val ? " sel" : ""}`}
+                    onClick={() => set("durationDays", d.val)}
+                  >
+                    {d.label}{" "}
+                    <span style={{ fontSize: ".72rem", opacity: 0.65 }}>
+                      · {d.sub.split("·")[1]?.trim()}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {form.durationDays && (
+                <div className="fhint ok">
+                  ✓ {getDurLabel(form.durationDays)} ·{" "}
+                  {getHours(parseInt(form.durationDays))}
+                </div>
+              )}
+            </div>
+
+            <div className="fg">
+              <div className="fr">
+                <div className="fl">Trainer / Faculty Name</div>
+                <input
+                  className="fi"
+                  placeholder="ARC LABS certified trainer name"
+                  value={form.trainer}
+                  onChange={(e) => set("trainer", e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* <div className="fr">
+              <div className="fl">Special Achievement / Award</div>
+              <input
+                className="fi"
+                placeholder="e.g. Best Project Award, First Place Hackathon"
+                value={form.achievement}
+                onChange={(e) => set("achievement", e.target.value)}
+              />
+            </div> */}
+
+            <div className="rnav">
+              <button className="btn-bk" onClick={() => setStep(1)}>
+                ← Back
+              </button>
+              <button
+                className="btn-next"
+                onClick={() => setStep(3)}
+                disabled={!step2ok}
+              >
+                Next → Performance
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* ─── STEP 3 ─── */}
+        {step === 3 && (
+          <>
+            <div className="fr">
+              <div className="fl">
+                Type Of Certificate
+                <span style={{ color: "var(--rose)" }}>*</span>
+                {/* <span className="fl-hint">As assessed by trainer</span> */}
+              </div>
+              <div className="pfbtns">
+                {CERTIFICATE.map((p) => (
+                  <button
+                    key={p}
+                    className={`pfbtn${form.performance === p ? ` s-${p.toLowerCase()}` : ""}`}
+                    onClick={() => set("performance", p)}
+                  >
+                    {p === "Excellence"
+                      ? "🏆"
+                      : p === "Participation"
+                        ? "⭐"
+                        : p === "Coordination"
+                          ? "👍"
+                          : "📘"}{" "}
+                    {p}
+                  </button>
+                ))}
+              </div>
+              {form.performance && (
+                <div className="fhint ok">
+                  <strong>{GRADE[form.performance]}</strong>
+                  {form.performance}
+                </div>
+              )}
+            </div>
+
+            <div className="fr">
+              <div className="fl">Trainer Feedback</div>
+              <textarea
+                className="fta"
+                placeholder="Any extra achievements, special mentions, topics covered, or notes about the training..."
+                value={form.notes}
+                onChange={(e) => set("notes", e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            {/* Summary preview */}
+            {form.performance && (
+              <div className="preview-box">
+                <div className="pb-lbl">Certificate Preview</div>
+                {[
+                  ["Name", form.fullName],
+                  ["Institution", form.institution],
+                  [
+                    "Technology",
+                    `${getTechObj(form.technology).icon} ${form.technology} — ${getDurLabel(form.durationDays)}`,
+                  ],
+                  ["Location", `${form.city}, ${form.state} – ${form.pincode}`],
+                  ["Grade", `${GRADE[form.performance]} (${form.performance})`],
+                ].map(([k, v]) => (
+                  <div className="pb-row" key={k}>
+                    <span className="pb-k">{k}</span>
+                    <span className="pb-v">{v}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="rnav">
+              <button className="btn-bk" onClick={() => setStep(2)}>
+                ← Back
+              </button>
+              <button
+                className="btn-next"
+                onClick={submit}
+                disabled={!step3ok || submitting}
+              >
+                {submitting
+                  ? "⏳ Registering..."
+                  : "🎓 Register & Get Certificate ID"}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════ MAIN ═══════════════════════════════════════ */
+export default function CertificationPage() {
+  const [tab, setTab] = useState("verify");
+  const [allCerts, setAllCerts] = useState(() => {
+    try {
+      const saved = localStorage.getItem("arclabs_certs");
+      return saved
+        ? { ...SAMPLE_CERTS, ...JSON.parse(saved) }
+        : { ...SAMPLE_CERTS };
+    } catch {
+      return { ...SAMPLE_CERTS };
+    }
+  });
+  const [recentlyVerified, setRecentlyVerified] = useState([]);
+
+  const handleRegister = (cert) => {
+    setAllCerts((prev) => {
+      const next = { ...prev, [cert.certId]: cert };
+      try {
+        localStorage.setItem("arclabs_certs", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const handleVerified = (cert) => {
+    setRecentlyVerified((prev) =>
+      [cert, ...prev.filter((c) => c.certId !== cert.certId)].slice(0, 5),
+    );
+  };
+
+  return (
+    <>
+      <style>{css}</style>
+
+      {/* NAV */}
+      <nav className="vnav">
+        <a href="/" className="vnav-logo">
+          <span className="vdot" />
+          ARC LABS
+        </a>
+        <div className="vnav-links">
+          <a href="/" className="vnav-link">
+            ← Home
+          </a>
+          <a href="/programs" className="vnav-link">
+            Programs
+          </a>
+          <a href="/products" className="vnav-link">
+            Products
+          </a>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <div className="vhero">
+        <div className="vtag">
+          <span className="vtdot" />
+          Official Certification Registry · ARC LABS
+        </div>
+        <h1>
+          Verify or Register
+          <br />
+          your <em>ARC LABS Certificate.</em>
+        </h1>
+        <p>
+          Every ARC LABS training certificate is registered in our system.
+          Verify any certificate instantly, or register your training to receive
+          a unique Certificate ID.
+        </p>
+      </div>
+
+      {/* TABS */}
+      <div className="mtabs">
+        <button
+          className={`mtab${tab === "verify" ? " active" : ""}`}
+          onClick={() => setTab("verify")}
+        >
+          🔍 Verify Certificate
+        </button>
+        <button
+          className={`mtab${tab === "register" ? " active" : ""}`}
+          onClick={() => setTab("register")}
+        >
+          📝 Register Certificate
+        </button>
+      </div>
+
+      {/* CONTENT */}
+      <div className="vcontent">
+        {tab === "verify" && (
+          <>
+            <VerifyTab allCerts={allCerts} onSuccess={handleVerified} />
+            {/* {recentlyVerified.length > 0 && (
+              <div className="recent-sec">
+                <div className="recent-lbl">Recently Verified</div>
+                <div className="recent-list">
+                  {recentlyVerified.map((c) => (
+                    <div className="ri" key={c.certId}>
+                      <div className="ri-l">
+                        <span className="ri-ico">
+                          {getTechObj(c.technology).icon}
+                        </span>
+                        <div>
+                          <div className="ri-cid">{c.certId}</div>
+                          <div className="ri-name">
+                            {c.fullName} · {c.technology}
+                          </div>
+                        </div>
+                      </div>
+                      <span className="ri-r">
+                        {c.city}, {c.state}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )} */}
+          </>
+        )}
+        {tab === "register" && <RegisterTab onRegistered={handleRegister} />}
+      </div>
+
+      {/* FOOTER */}
+      {/* <div className="vfoot">
+        <span>
+          © 2025 ARC LABS · MSME Registered · Hyderabad · Official Certification
+          Registry
+        </span>
+        <span>hello@arclabs.in · +91 8699929532</span>
+      </div>
+
+      <a
+        href="https://wa.me/918699929532"
+        className="wa-f"
+        target="_blank"
+        rel="noreferrer"
+      >
+        💬
+      </a> */}
+    </>
+  );
+}
