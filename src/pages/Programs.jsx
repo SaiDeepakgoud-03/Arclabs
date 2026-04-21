@@ -2121,6 +2121,366 @@ const TECHNOLOGIES = [
       },
     },
   },
+{
+  id: "drone",
+  name: "Drone Technology",
+  abbr: "UAV",
+  color: "#00BFFF",
+  icon: "🚁",
+  iconBg: "rgba(0,191,255,0.1)",
+  level: "INTERMEDIATE",
+  levelBg: "rgba(0,191,255,0.1)",
+  levelColor: "#00BFFF",
+  desc: "Design and build drones with flight control, GPS navigation, and real-time aerial applications.",
+  tools: ["PX4", "ArduPilot", "GPS", "Telemetry", "Mission Planner", "Python"],
+  tagline: "Take your skills to the skies.",
+  fullDesc:
+    "Drone Technology focuses on UAV design, flight control systems, GPS navigation, and real-time aerial data processing. Students learn how drones are used in agriculture, surveillance, mapping, and automation.",
+
+  workshops: {
+    2: {
+      title: "Drone Basics — 2-Day Workshop",
+      subtitle: "Build and fly your first drone",
+      audience: "Beginners, Engineering Year 1",
+      totalHours: "14 hrs",
+      sessions: "6 sessions",
+      certification: "ARC LABS Drone Starter Certificate",
+      modules: [
+        {
+          day: "DAY 1",
+          title: "Drone Hardware & Flight Basics",
+          desc: "Understand drone components and flight principles.",
+          topics: [
+            "Drone anatomy — frame, motors, ESC",
+            "Flight controller basics",
+            "Battery and power systems",
+            "Assembly of drone kit",
+            "Basic flight principles"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 2",
+          title: "Flight & Control",
+          desc: "Learn to control and fly drones safely.",
+          topics: [
+            "Remote controller calibration",
+            "Flight modes and stabilization",
+            "Basic drone flying practice",
+            "Introduction to GPS module",
+            "Mini project: Controlled drone flight"
+          ],
+          duration: "7 hrs",
+        },
+      ],
+      outcomes: [
+        "Understand drone components",
+        "Assemble a drone",
+        "Perform basic flight control",
+        "Understand safety guidelines"
+      ],
+    },
+
+    3: {
+      title: "Drone Systems — 3-Day Workshop",
+      subtitle: "Flight control and GPS navigation",
+      audience: "Engineering students",
+      totalHours: "21 hrs",
+      sessions: "9 sessions",
+      certification: "ARC LABS Drone Systems Certificate",
+      modules: [
+        {
+          day: "DAY 1",
+          title: "Drone Hardware Deep Dive",
+          desc: "Detailed understanding of UAV systems.",
+          topics: [
+            "Motors and ESC working",
+            "Flight controller configuration",
+            "Sensors — gyroscope, accelerometer",
+            "Power distribution board",
+            "Firmware flashing (PX4/ArduPilot)"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 2",
+          title: "Navigation & GPS",
+          desc: "Autonomous navigation techniques.",
+          topics: [
+            "GPS module integration",
+            "Waypoint navigation",
+            "Mission Planner software",
+            "Telemetry communication",
+            "Failsafe mechanisms"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 3",
+          title: "Drone Applications",
+          desc: "Real-world drone applications.",
+          topics: [
+            "Aerial mapping basics",
+            "Agriculture spraying drones",
+            "Surveillance systems",
+            "Obstacle avoidance intro",
+            "Capstone project"
+          ],
+          duration: "7 hrs",
+        },
+      ],
+      outcomes: [
+        "Configure drone systems",
+        "Implement GPS navigation",
+        "Use mission planning tools",
+        "Build real-world applications"
+      ],
+    },
+
+    5: {
+      title: "Advanced Drone Engineering — 5-Day",
+      subtitle: "Autonomous drones & AI integration",
+      audience: "Advanced learners",
+      totalHours: "35 hrs",
+      sessions: "15 sessions",
+      certification: "ARC LABS Certified Drone Engineer",
+      modules: [
+        {
+          day: "DAY 1",
+          title: "Drone Architecture",
+          desc: "Advanced UAV system design.",
+          topics: [
+            "Drone system architecture",
+            "Sensor fusion basics",
+            "PID control",
+            "Flight stabilization"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 2",
+          title: "Autonomous Navigation",
+          desc: "Self-flying drones.",
+          topics: [
+            "Waypoint automation",
+            "Path planning",
+            "Obstacle avoidance basics",
+            "Failsafe systems"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 3",
+          title: "Computer Vision",
+          desc: "Drone vision systems.",
+          topics: [
+            "OpenCV basics",
+            "Object detection",
+            "Camera integration",
+            "Tracking systems"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 4",
+          title: "AI Integration",
+          desc: "Smart drones with AI.",
+          topics: [
+            "YOLO basics",
+            "Edge AI for drones",
+            "Autonomous decision making",
+            "Data processing"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 5",
+          title: "Capstone Project",
+          desc: "Complete drone system.",
+          topics: [
+            "Full system integration",
+            "Testing & debugging",
+            "Final demo",
+            "Certification"
+          ],
+          duration: "7 hrs",
+        },
+      ],
+      outcomes: [
+        "Build autonomous drones",
+        "Implement AI in drones",
+        "Work with computer vision",
+        "Develop real-world UAV systems"
+      ],
+    },
+  },
+},
+{
+  id: "ai",
+  name: "Artificial Intelligence",
+  abbr: "AI",
+  color: "#FF4D8D",
+  icon: "🧠",
+  iconBg: "rgba(255,77,141,0.1)",
+  level: "FOUNDATIONAL",
+  levelBg: "rgba(255,77,141,0.1)",
+  levelColor: "#FF4D8D",
+  desc: "Build intelligent systems using machine learning, deep learning, and real-world AI applications.",
+  tools: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "NLP"],
+  tagline: "Teach machines to think.",
+  fullDesc:
+    "Artificial Intelligence enables machines to learn from data and make decisions. Students explore machine learning, deep learning, and AI applications across industries.",
+
+  workshops: {
+    2: {
+      title: "AI Basics — 2-Day Workshop",
+      subtitle: "Introduction to AI and ML",
+      audience: "Beginners",
+      totalHours: "14 hrs",
+      sessions: "6 sessions",
+      certification: "ARC LABS AI Starter Certificate",
+      modules: [
+        {
+          day: "DAY 1",
+          title: "AI Fundamentals",
+          desc: "Basics of AI and ML.",
+          topics: [
+            "Introduction to AI",
+            "Machine learning basics",
+            "Types of ML",
+            "Python basics",
+            "Data handling"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 2",
+          title: "ML Models",
+          desc: "Build simple models.",
+          topics: [
+            "Regression",
+            "Classification",
+            "Model training",
+            "Prediction",
+            "Mini project"
+          ],
+          duration: "7 hrs",
+        },
+      ],
+      outcomes: [
+        "Understand AI concepts",
+        "Build ML models",
+        "Work with datasets",
+        "Create basic AI project"
+      ],
+    },
+
+    3: {
+      title: "AI Systems — 3-Day Workshop",
+      subtitle: "Machine learning & applications",
+      audience: "Intermediate learners",
+      totalHours: "21 hrs",
+      sessions: "9 sessions",
+      certification: "ARC LABS AI Systems Certificate",
+      modules: [
+        {
+          day: "DAY 1",
+          title: "Data & ML",
+          desc: "Working with datasets.",
+          topics: [
+            "Data preprocessing",
+            "Feature engineering",
+            "Supervised learning",
+            "Model evaluation"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 2",
+          title: "Deep Learning",
+          desc: "Neural networks.",
+          topics: [
+            "Neural networks",
+            "TensorFlow basics",
+            "Model building",
+            "Training models"
+          ],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 3",
+          title: "AI Applications",
+          desc: "Real-world AI.",
+          topics: [
+            "Computer vision",
+            "NLP basics",
+            "Chatbots",
+            "Capstone project"
+          ],
+          duration: "7 hrs",
+        },
+      ],
+      outcomes: [
+        "Build ML & DL models",
+        "Work on AI applications",
+        "Understand deep learning",
+        "Deploy AI solutions"
+      ],
+    },
+
+    5: {
+      title: "Advanced AI Engineering — 5-Day",
+      subtitle: "Deep learning & real-world AI systems",
+      audience: "Advanced learners",
+      totalHours: "35 hrs",
+      sessions: "15 sessions",
+      certification: "ARC LABS Certified AI Engineer",
+      modules: [
+        {
+          day: "DAY 1",
+          title: "ML Foundations",
+          desc: "Advanced ML.",
+          topics: ["Regression", "Classification", "Model tuning"],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 2",
+          title: "Deep Learning",
+          desc: "Neural networks.",
+          topics: ["CNN", "RNN", "Training"],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 3",
+          title: "Computer Vision",
+          desc: "Image processing.",
+          topics: ["OpenCV", "Object detection", "YOLO"],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 4",
+          title: "NLP",
+          desc: "Text processing.",
+          topics: ["NLP basics", "Chatbots", "Transformers"],
+          duration: "7 hrs",
+        },
+        {
+          day: "DAY 5",
+          title: "Capstone",
+          desc: "Full AI system.",
+          topics: ["Project", "Deployment", "Presentation"],
+          duration: "7 hrs",
+        },
+      ],
+      outcomes: [
+        "Build AI systems",
+        "Work with DL models",
+        "Develop CV & NLP apps",
+        "Deploy AI solutions"
+      ],
+    },
+  },
+}
 ];
 
 const DURATION_OPTIONS = [
@@ -2479,7 +2839,7 @@ export default function ProgramsPage() {
       <div className="prog-hero">
         <div className="prog-hero-inner">
           <div className="prog-badge">
-            <span className="prog-badge-dot" />8 Technology Tracks · 3 Workshop
+            <span className="prog-badge-dot" />10 Technology Tracks · 3 Workshop
             Formats
           </div>
           <h1>
@@ -2493,7 +2853,7 @@ export default function ProgramsPage() {
           </p>
           <div className="prog-stats-row">
             {[
-              { n: "8", l: "Technology Tracks" },
+              { n: "10", l: "Technology Tracks" },
               { n: "3", l: "Workshop Formats" },
               { n: "35hrs", l: "Max per Bootcamp" },
               { n: "100%", l: "Hands-On Delivery" },

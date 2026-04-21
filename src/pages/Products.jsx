@@ -519,11 +519,12 @@ const PRODUCTS = [
     short: "IoT Lite Kit",
     tagline:
       "Compact, beginner-friendly IoT training board for Arduino & ESP32.",
-    price: 12000,
-    oldPrice: 14500,
+    price: 15000,
+    oldPrice: 18000,
     color: "#FF8C42",
     glow: "255,140,66",
     emoji: "🔌",
+    image: "/images/products/lite-kit.jpg",
     badge: "BEGINNER",
     badgeBg: "rgba(255,140,66,0.15)",
     badgeColor: "#FF8C42",
@@ -601,11 +602,12 @@ const PRODUCTS = [
     short: "IoT Experience Kit",
     tagline:
       "All-in-one multi-MCU trainer — the most versatile kit in the lineup.",
-    price: 10000,
-    oldPrice: 13000,
+    price: 12000,
+    oldPrice: 15000,
     color: "#00F5A0",
     glow: "0,245,160",
     emoji: "⚡",
+    image: "/images/products/experience-kit.jpg",
     badge: "BEST SELLER",
     badgeBg: "rgba(0,245,160,0.12)",
     badgeColor: "#00F5A0",
@@ -714,11 +716,12 @@ const PRODUCTS = [
     short: "IoT Pro Kit",
     tagline:
       "High-performance development board for advanced IoT, edge AI, and Raspberry Pi.",
-    price: 20000,
-    oldPrice: 24000,
+    price: 25000,
+    oldPrice: 28000,
     color: "#00BFFF",
     glow: "0,191,255",
     emoji: "🚀",
+    image: "/images/products/pro-kit.jpg",
     badge: "ADVANCED",
     badgeBg: "rgba(0,191,255,0.12)",
     badgeColor: "#00BFFF",
@@ -1337,7 +1340,22 @@ function ProductCard({ product, isSelected, onSelect, onOrder }) {
           </span>
         </div>
         {product.isBest && <span className="pc-best">★ BEST SELLER</span>}
-        <span className="pc-emoji">{product.emoji}</span>
+        {product.image ? (
+          <img 
+            src={product.image} 
+            alt={product.name}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              position: "relative",
+              zIndex: 1,
+              filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.5))"
+            }}
+          />
+        ) : (
+          <span className="pc-emoji">{product.emoji}</span>
+        )}
         <div className="pc-circuit" />
       </div>
 
@@ -1540,7 +1558,7 @@ export default function ProductsPage() {
                       color: "var(--off)",
                     }}
                   >
-                    ₹12,000
+                    ₹15,000
                   </span>
                 </th>
                 <th className="th-kit">
@@ -1553,7 +1571,7 @@ export default function ProductsPage() {
                       color: "var(--off)",
                     }}
                   >
-                    ₹10,000 ★
+                    ₹12,000 ★
                   </span>
                 </th>
                 <th className="th-pro">
@@ -1566,7 +1584,7 @@ export default function ProductsPage() {
                       color: "var(--off)",
                     }}
                   >
-                    ₹20,000
+                    ₹25,000
                   </span>
                 </th>
               </tr>

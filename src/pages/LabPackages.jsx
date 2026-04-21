@@ -120,7 +120,7 @@ body::before {
 .lhero-text h1 em { font-style: normal; color: var(--lime); }
 .lhero-text p {
   color: var(--mist); font-size: .97rem; font-weight: 300;
-  max-width: 480px; line-height: 1.8; margin-bottom: 2rem;
+  max-width: 480px; line-height: 1.8; margin-bottom: 2rem; text-align: left;
 }
 .lhero-actions { display: flex; gap: .8rem; flex-wrap: wrap; }
 
@@ -184,7 +184,7 @@ body::before {
   font-size: clamp(1.8rem, 3.5vw, 2.8rem);
   letter-spacing: -.03em; line-height: 1.1; margin-bottom: .7rem;
 }
-.sec-sub { color: var(--mist); font-size: .95rem; font-weight: 300; max-width: 480px; margin: 0 auto; line-height: 1.75; }
+.sec-sub { color: var(--mist); font-size: .95rem; font-weight: 300; max-width: 480px; margin: 0 auto; line-height: 1.75; text-align: center; }
 
 .packages-grid {
   display: grid;
@@ -267,12 +267,17 @@ body::before {
   color: var(--mist); letter-spacing: .1em; text-transform: uppercase;
   margin-bottom: .9rem;
 }
-.pkg-feature-list { list-style: none; margin-bottom: 1.2rem; }
+.pkg-feature-list { list-style: none; margin-bottom: 1.2rem; padding-left: 0; }
 .pkg-feature-list li {
   display: flex; align-items: flex-start; gap: 10px;
-  font-size: .82rem; color: var(--fog); padding: 7px 0;
+  font-size: .82rem; color: var(--fog); padding: 7px 0 7px 18px;
   border-bottom: 1px solid var(--line);
   line-height: 1.5;
+  position: relative;
+}
+.pkg-feature-list li::before {
+  content: '•'; position: absolute; left: 0;
+  color: var(--lime); font-weight: 700; font-size: 1rem;
 }
 .pkg-feature-list li:last-child { border-bottom: none; }
 .pf-icon { flex-shrink: 0; font-size: .75rem; margin-top: 2px; }
@@ -374,7 +379,7 @@ body::before {
 }
 .proc-icon { font-size: 1.5rem; margin-bottom: .6rem; }
 .proc-title { font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700; margin-bottom: .3rem; }
-.proc-desc { font-size: .77rem; color: var(--mist); line-height: 1.6; max-width: 160px; }
+.proc-desc { font-size: .77rem; color: var(--mist); line-height: 1.6; max-width: 160px; text-align: center; }
 .proc-time {
   margin-top: .6rem;
   font-family: 'JetBrains Mono', monospace; font-size: .6rem;
@@ -459,7 +464,7 @@ body::before {
   font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
   letter-spacing: -.025em; margin-bottom: .5rem;
 }
-.csr-callout p { font-size: .87rem; color: var(--mist); line-height: 1.7; max-width: 520px; }
+.csr-callout p { font-size: .87rem; color: var(--mist); line-height: 1.7; max-width: 520px; text-align: left; }
 .csr-pills { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
 .csr-pill {
   font-size: .72rem; padding: 4px 12px; border-radius: 100px;
@@ -645,32 +650,32 @@ const PACKAGES = {
       ],
       features: [
         {
-          icon: "🔧",
+          icon: "",
           title: "IobiT IoT Lite Kit × 15 units",
           detail: "Arduino + ESP32, sensors, relay — all essentials",
         },
         {
-          icon: "📚",
+          icon: "",
           title: "NEP 2020 Curriculum — Level 1",
           detail: "30 sessions mapped to CBSE skill subjects",
         },
         {
-          icon: "🎓",
+          icon: "",
           title: "Teacher Training — 2 Days",
           detail: "Onsite certification for 2 faculty members",
         },
         {
-          icon: "🏷️",
+          icon: "",
           title: "Lab Branding & Installation",
           detail: "ARC LABS co-branded lab setup",
         },
         {
-          icon: "🔄",
+          icon: "",
           title: "6-Month Support Contract",
           detail: "Remote + 2 onsite visits included",
         },
         {
-          icon: "📱",
+          icon: "",
           title: "Digital Student Workbooks",
           detail: "30 project-based worksheets",
         },
@@ -697,42 +702,42 @@ const PACKAGES = {
       audience: ["High School", "Classes 8–12", "100–200 Students/Year"],
       features: [
         {
-          icon: "🔧",
+          icon: "",
           title: "IobiT IoT Pro Kit × 20 units",
           detail: "Raspberry Pi + ESP32, full sensor suite",
         },
         {
-          icon: "🤖",
+          icon: "",
           title: "Robotics Starter Kit × 10 units",
           detail: "Wheeled robots with obstacle avoidance",
         },
         {
-          icon: "📚",
+          icon: "",
           title: "Full Curriculum — Levels 1 & 2",
           detail: "60 sessions, IoT + Robotics tracks",
         },
         {
-          icon: "🎓",
+          icon: "",
           title: "Teacher Certification — 3 Days",
           detail: "Level 1 + Level 2 for up to 4 faculty",
         },
         {
-          icon: "🏷️",
+          icon: "",
           title: "Complete Lab Installation",
           detail: "Co-branded, furniture layout, signage",
         },
         {
-          icon: "🔄",
+          icon: "",
           title: "Annual Support + Updates",
           detail: "Quarterly curriculum refresh included",
         },
         {
-          icon: "💻",
+          icon: "",
           title: "Student Assessment Portal",
           detail: "Digital grading, progress tracking",
         },
         {
-          icon: "☁️",
+          icon: "",
           title: "Cloud Platform Access",
           detail: "Arc Lab Cloud for all student projects",
         },
@@ -759,47 +764,47 @@ const PACKAGES = {
       audience: ["Senior Secondary", "Classes 9–12", "200+ Students/Year"],
       features: [
         {
-          icon: "🔧",
+          icon: "",
           title: "Full IoRT + AI Lab — Custom Design",
           detail: "IoT Pro + Experience kits, AI modules",
         },
         {
-          icon: "🤖",
+          icon: "",
           title: "Advanced Robotics Stack",
           detail: "Autonomous bots, robotic arms, ROS intro",
         },
         {
-          icon: "🧠",
+          icon: "",
           title: "AI/ML Starter Modules",
           detail: "TinyML, Edge AI, image classification",
         },
         {
-          icon: "📚",
+          icon: "",
           title: "Complete Curriculum — All Levels",
           detail: "IoT + Robotics + AI, 90 sessions",
         },
         {
-          icon: "🎓",
+          icon: "",
           title: "Faculty Cert — Both Levels",
           detail: "5-day intensive for up to 6 faculty",
         },
         {
-          icon: "🏷️",
+          icon: "",
           title: "Priority Installation & Branding",
           detail: "Dedicated project manager assigned",
         },
         {
-          icon: "🔄",
+          icon: "",
           title: "3-Year Support SLA",
           detail: "Monthly visits + 24hr remote support",
         },
         {
-          icon: "📊",
+          icon: "",
           title: "CSR Impact Documentation",
           detail: "Full reporting for annual CSR reports",
         },
         {
-          icon: "🏆",
+          icon: "",
           title: "Competition Prep Program",
           detail: "Smart India Hackathon, ATL Marathon",
         },
@@ -828,27 +833,27 @@ const PACKAGES = {
       audience: ["Diploma Programs", "B.Tech Year 1–2", "30–40 Students/Batch"],
       features: [
         {
-          icon: "🔧",
+          icon: "",
           title: "IobiT IoT Experience Kit × 20 units",
           detail: "5 MCU platforms, full sensor suite",
         },
         {
-          icon: "📚",
+          icon: "",
           title: "Lab Manual — IoT Fundamentals",
           detail: "20 experiments mapped to KTU/JNTU/Anna syllabus",
         },
         {
-          icon: "🎓",
+          icon: "",
           title: "Faculty Training — 2 Days",
           detail: "Hands-on certification for 2 faculty",
         },
         {
-          icon: "🔄",
+          icon: "",
           title: "1-Year Technical Support",
           detail: "Remote support + annual review visit",
         },
         {
-          icon: "📋",
+          icon: "",
           title: "Experiment Manuals",
           detail: "Step-by-step printed + digital lab manuals",
         },
@@ -875,37 +880,37 @@ const PACKAGES = {
       audience: ["B.Tech ECE/EEE/CSE", "Year 2–4", "60–80 Students/Batch"],
       features: [
         {
-          icon: "🔧",
+          icon: "",
           title: "IoT Pro Kit × 20 + Experience Kit × 20",
           detail: "Dual kit setup for parallel experiment tracks",
         },
         {
-          icon: "📚",
+          icon: "",
           title: "Complete Lab Manual — 3 Courses",
           detail: "IoT, Embedded Systems, IIoT — 60 experiments",
         },
         {
-          icon: "🎓",
+          icon: "",
           title: "Faculty Training — 5 Days",
           detail: "Level 1 + Level 2 cert for 4 faculty",
         },
         {
-          icon: "💻",
+          icon: "",
           title: "Online Student Portal Access",
           detail: "Recorded sessions + assignments + assessments",
         },
         {
-          icon: "🔄",
+          icon: "",
           title: "2-Year Support Contract",
           detail: "Quarterly visits + remote helpdesk",
         },
         {
-          icon: "📊",
+          icon: "",
           title: "NBA/NAAC Lab Documentation",
           detail: "CO-PO mapping, outcome reports",
         },
         {
-          icon: "☁️",
+          icon: "",
           title: "Cloud Platform License",
           detail: "50-seat Arc Lab Cloud access",
         },
@@ -932,47 +937,47 @@ const PACKAGES = {
       audience: ["M.Tech / Ph.D.", "Research Centers", "CoE / Incubation Labs"],
       features: [
         {
-          icon: "🔧",
+          icon: "",
           title: "Complete Hardware Stack — All 3 Kits",
           detail: "IoT Lite + Experience + Pro, custom quantities",
         },
         {
-          icon: "🤖",
+          icon: "",
           title: "Advanced Robotics + ROS Setup",
           detail: "ROS2 workstations, LIDAR, robotic arms",
         },
         {
-          icon: "🧠",
+          icon: "",
           title: "AIoT Research Platform",
           detail: "Edge AI modules, GPU server integration",
         },
         {
-          icon: "📚",
+          icon: "",
           title: "Research-Grade Lab Manuals",
           detail: "Customized to dept. syllabus + research needs",
         },
         {
-          icon: "🎓",
+          icon: "",
           title: "Expert Faculty Training — 5 Days",
           detail: "All tracks, all levels, up to 8 faculty",
         },
         {
-          icon: "🔄",
+          icon: "",
           title: "3-Year Premium SLA",
           detail: "Dedicated account manager, 24hr support",
         },
         {
-          icon: "📊",
+          icon: "",
           title: "AICTE/RUSA Grant Documentation",
           detail: "Full grant application support",
         },
         {
-          icon: "🤝",
+          icon: "",
           title: "Industry Connect Program",
           detail: "Internship pipeline, R&D collaboration",
         },
         {
-          icon: "🏆",
+          icon: "",
           title: "Student Project Mentoring",
           detail: "6 mentoring sessions per year included",
         },

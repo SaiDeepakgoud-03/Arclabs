@@ -302,6 +302,7 @@ function Products() {
   const PRODUCTS = [
     {
       emoji: "⚡",
+      image: "/images/products/lite-kit.jpg",
       label: "STARTER",
       name: "IobiT IoT Lite Kit",
       desc: "Beginner IoT development board with Arduino & ESP32 support. Includes essential sensors for classroom learning.",
@@ -309,6 +310,7 @@ function Products() {
     },
     {
       emoji: "🚀",
+      image: "/images/products/pro-kit.jpg",
       label: "PRO",
       name: "IobiT IoT Pro Kit",
       desc: "Advanced IoT and Embedded Systems board. Features Raspberry Pi & ESP32, industrial sensors, and cloud connectivity.",
@@ -316,6 +318,7 @@ function Products() {
     },
     {
       emoji: "🔬",
+      image: "/images/products/experience-kit.jpg",
       label: "ADVANCED",
       name: "IoT Experience Kit",
       desc: "All-in-one platform supporting Arduino, ESP32, STM32. Versatile for research and advanced lab projects.",
@@ -341,7 +344,19 @@ function Products() {
         {PRODUCTS.map((p) => (
           <Link to="/products" className="product-card" key={p.name}>
             <div className="product-img">
-              <span>{p.emoji}</span>
+              {p.image ? (
+                <img 
+                  src={p.image} 
+                  alt={p.name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover"
+                  }}
+                />
+              ) : (
+                <span>{p.emoji}</span>
+              )}
               <span className="product-label">{p.label}</span>
             </div>
             <div className="product-body">
