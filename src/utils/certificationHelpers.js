@@ -2,7 +2,6 @@ import {
   TECHNOLOGIES,
   SKILLS_MAP,
   PIN_MAP,
-  GRADE,
   PERFORMANCE_GRADES,
 } from "../data/certificationConstants.js";
 
