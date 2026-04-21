@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════
 //  ARC LABS — Home Page
-//  src/pages/Home.jsx
+//  src/pages/Home.jsxF
 // ═══════════════════════════════════════════════════════
 
 import { useEffect, useState } from "react";
@@ -55,13 +55,7 @@ function Hero() {
 
   const [current, setCurrent] = useState(0);
 
-  const nextSlide = () => {
-    setCurrent((prev) => (prev + 1) % LAB_PACKAGES.length);
-  };
 
-  const prevSlide = () => {
-    setCurrent((prev) => (prev === 0 ? LAB_PACKAGES.length - 1 : prev - 1));
-  };
 
   return (
     <section className="hero">

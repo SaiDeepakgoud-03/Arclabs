@@ -41,16 +41,16 @@ export function getTechObj(id) {
 }
 
 export function getDurLabel(days) {
-  if (days == 2) return "2-Day Workshop";
-  if (days == 3) return "3-Day Intensive";
-  if (days == 5) return "5-Day Bootcamp";
+  if (days === 2) return "2-Day Workshop";
+  if (days === 3) return "3-Day Intensive";
+  if (days === 5) return "5-Day Bootcamp";
   return `${days}-Day Program`;
 }
 
 export function getHours(days) {
-  if (days == 2) return "14 hrs";
-  if (days == 3) return "21 hrs";
-  if (days == 5) return "35 hrs";
+  if (days === 2) return "14 hrs";
+  if (days === 3) return "21 hrs";
+  if (days === 5) return "35 hrs";
   return `${days * 7} hrs`;
 }
 
