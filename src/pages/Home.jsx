@@ -72,7 +72,7 @@ function Hero() {
           <br />
           <span className="ht">AI + IoRT</span> Lab
           <br />
-          System for <span className="hb">Schools</span>
+          System for <span className="hb">Institutions</span>
         </h1>
 
         <p className="hero-sub">

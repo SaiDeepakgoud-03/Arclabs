@@ -602,8 +602,8 @@ const PRODUCTS = [
     short: "IoT Experience Kit",
     tagline:
       "All-in-one multi-MCU trainer — the most versatile kit in the lineup.",
-    price: 12000,
-    oldPrice: 15000,
+    price: 20000,
+    oldPrice: 23000,
     color: "#00F5A0",
     glow: "0,245,160",
     emoji: "⚡",
@@ -853,9 +853,9 @@ const COMPARE_ROWS = [
   { cat: true, label: "Pricing" },
   {
     label: "Price (incl. GST)",
-    lite: "₹12,000",
-    exp: "₹10,000",
-    pro: "₹20,000",
+    lite: "₹15,000",
+    exp: "₹20,000",
+    pro: "₹25,000",
     priceRow: true,
   },
   { label: "Best For", lite: "Beginners", exp: "All levels", pro: "Advanced" },
@@ -1571,7 +1571,7 @@ export default function ProductsPage() {
                       color: "var(--off)",
                     }}
                   >
-                    ₹12,000 ★
+                    ₹20,000 ★
                   </span>
                 </th>
                 <th className="th-pro">
