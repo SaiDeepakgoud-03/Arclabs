@@ -1,36 +1,52 @@
 // ═══════════════════════════════════════════════════════
-//  ARC LABS — VerifyPanel Component
-//  src/components/VerifyPanel.jsx
-//  Handles certificate ID lookup and display
+//  ARC LABS — VerifyPanel Component (Firebase Connected)
 // ═══════════════════════════════════════════════════════
 
 import { useState } from "react";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+
 import CertificateDisplay from "./CertificateDisplay";
 
-export default function VerifyPanel({ allCerts, onSuccess }) {
+export default function VerifyPanel({ onSuccess }) {
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
 
-  const doVerify = (id) => {
+  // 🔥 Firebase Verify Function
+  const doVerify = async (id) => {
     const sid = (id || q).trim().toUpperCase();
     if (!sid) return;
+
     setLoading(true);
     setError("");
     setResult(null);
-    setTimeout(() => {
-      const cert = allCerts[sid];
-      if (cert) {
-        setResult(cert);
-        onSuccess && onSuccess(cert);
-      } else
+
+    try {
+      const ref = doc(db, "certificates", sid);
+      const snap = await getDoc(ref);
+
+      if (snap.exists()) {
+        const certData = snap.data();
+
+        // Add certId for UI usage
+        const finalData = { certId: sid, ...certData };
+
+        setResult(finalData);
+        onSuccess && onSuccess(finalData);
+      } else {
         setError(
-          `No certificate found with ID "${sid}". Check the ID and try again.`,
+          `No certificate found with ID "${sid}". Check the ID and try again.`
         );
-      setLoading(false);
-    }, 850);
+      }
+    } catch (err) {
+      console.log(err);
+      setError("Database connection error ❌");
+    }
+
+    setLoading(false);
   };
 
   const copy = () => {
@@ -45,18 +61,20 @@ export default function VerifyPanel({ allCerts, onSuccess }) {
         <div className="vcard-eye">Certificate Verification</div>
         <div className="vcard-title">Verify Authenticity</div>
         <div className="vcard-sub">
-          Enter the ARC LABS Certificate ID (7 characters, e.g. ARC4F2K) to
-          instantly verify and view the complete certificate record.
+          Enter the ARC LABS Certificate ID to instantly verify and view the
+          complete certificate record.
         </div>
+
         <div className="srow">
           <input
             className="cert-inp"
             placeholder="Enter Certificate ID — e.g. ARC4F2K"
             value={q}
-            maxLength={9}
+            maxLength={20}
             onChange={(e) => setQ(e.target.value.toUpperCase())}
             onKeyDown={(e) => e.key === "Enter" && doVerify()}
           />
+
           <button
             className="btn-v"
             onClick={() => doVerify()}
@@ -89,14 +107,18 @@ export default function VerifyPanel({ allCerts, onSuccess }) {
               </span>
             </div>
           </div>
+
           <CertificateDisplay cert={result} />
+
           <div className="cert-acts" style={{ marginTop: "1rem" }}>
             <button className="btn-act primary" onClick={copy}>
               📋 Copy Certificate ID
             </button>
+
             <button className="btn-act ghost" onClick={() => window.print()}>
               🖨️ Print
             </button>
+
             <a
               className="btn-act ghost"
               href={`https://wa.me/?text=My ARC LABS Certificate: ${result.certId} — Verify at arclabs.in/verify`}

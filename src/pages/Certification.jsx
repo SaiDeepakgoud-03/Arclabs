@@ -1,36 +1,15 @@
 import { useState } from "react";
-import { SAMPLE_CERTS } from "../data/certificationConstants.js";
 import "../styles/Certification.css";
 import VerifyPanel from "../components/VerifyPanel";
 import RegisterPanel from "../components/RegisterPanel";
 
 export default function CertificationPage() {
   const [tab, setTab] = useState("verify");
-  const [allCerts, setAllCerts] = useState(() => {
-    try {
-      const saved = localStorage.getItem("arclabs_certs");
-      return saved
-        ? { ...SAMPLE_CERTS, ...JSON.parse(saved) }
-        : { ...SAMPLE_CERTS };
-    } catch {
-      return { ...SAMPLE_CERTS };
-    }
-  });
   const [recentlyVerified, setRecentlyVerified] = useState([]);
-
-  const handleRegister = (cert) => {
-    setAllCerts((prev) => {
-      const next = { ...prev, [cert.certId]: cert };
-      try {
-        localStorage.setItem("arclabs_certs", JSON.stringify(next));
-      } catch {}
-      return next;
-    });
-  };
 
   const handleVerified = (cert) => {
     setRecentlyVerified((prev) =>
-      [cert, ...prev.filter((c) => c.certId !== cert.certId)].slice(0, 5),
+      [cert, ...prev.filter((c) => c.certId !== cert.certId)].slice(0, 5)
     );
   };
 
@@ -43,15 +22,9 @@ export default function CertificationPage() {
           ARC LABS
         </a>
         <div className="vnav-links">
-          <a href="/" className="vnav-link">
-            ← Home
-          </a>
-          <a href="/programs" className="vnav-link">
-            Programs
-          </a>
-          <a href="/products" className="vnav-link">
-            Products
-          </a>
+          <a href="/" className="vnav-link">← Home</a>
+          <a href="/programs" className="vnav-link">Programs</a>
+          <a href="/products" className="vnav-link">Products</a>
         </div>
       </nav>
 
@@ -67,7 +40,6 @@ export default function CertificationPage() {
           your <em>ARC LABS Certificate.</em>
         </h1>
         <p>
-          Every ARC LABS training certificate is registered in our system.
           Verify any certificate instantly, or register your training to receive
           a unique Certificate ID.
         </p>
@@ -81,6 +53,7 @@ export default function CertificationPage() {
         >
           🔍 Verify Certificate
         </button>
+
         <button
           className={`mtab${tab === "register" ? " active" : ""}`}
           onClick={() => setTab("register")}
@@ -92,10 +65,11 @@ export default function CertificationPage() {
       {/* CONTENT */}
       <div className="vcontent">
         {tab === "verify" && (
-          <VerifyPanel allCerts={allCerts} onSuccess={handleVerified} />
+          <VerifyPanel onSuccess={handleVerified} />
         )}
+
         {tab === "register" && (
-          <RegisterPanel onRegistered={handleRegister} allCerts={allCerts} />
+          <RegisterPanel onRegistered={handleVerified} />
         )}
       </div>
 
@@ -111,7 +85,6 @@ export default function CertificationPage() {
       <a
         href="https://wa.me/919876543210"
         className="wa-f"
-        title="Chat with us on WhatsApp"
         target="_blank"
         rel="noreferrer"
       >

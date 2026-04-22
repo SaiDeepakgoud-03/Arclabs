@@ -1,3 +1,4 @@
+import { db } from "../firebase";
 import { useState, useEffect, useRef } from "react";
 
 // ─── GLOBAL STYLES ────────────────────────────────────────────────────────────
