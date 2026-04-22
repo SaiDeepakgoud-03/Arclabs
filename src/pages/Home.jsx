@@ -22,7 +22,7 @@ function Hero() {
       name: "Starter Lab",
       tag: "Entry Level",
       features: [
-        "IobiT Hardware Kit",
+        "ARC Hardware Kit",
         "AI + IoRT Curriculum",
         "2-Day Teacher Training",
         "Installation Support",
@@ -169,48 +169,91 @@ function TrustBar() {
 
 // ─── Services ───────────────────────────────────────────
 function Services() {
+  const [openCard, setOpenCard] = useState(null);
+
+  const toggle = (id) => {
+    setOpenCard(openCard === id ? null : id);
+  };
+
   const SERVICES = [
     {
+      id: 1,
       icon: "🏫",
       bg: "rgba(0,232,212,0.11)",
       title: "School Lab Setup & STEM Programs",
       desc: "End-to-end IoRT + AI lab installation for Classes 3–10. Hardware, curriculum, installation, and ongoing support bundled in one package.",
+      more: `Complete lab infrastructure with IoT and AI kits.
+Teacher training and certification included.
+Aligned with NEP 2020 curriculum.
+Hands-on student learning with real projects.
+Annual support and maintenance provided.`,
     },
     {
+      id: 2,
       icon: "🎓",
       bg: "rgba(0,184,255,0.11)",
       title: "College Training — IoT, AI & Embedded",
       desc: "Industry-driven curriculum in IoT, AI, Cloud, and Embedded Systems. Real projects, live hardware, and certification for engineering students.",
+      more: `Advanced technical training with real hardware.
+Live project development and internships.
+Placement-oriented curriculum.
+Industry expert mentoring sessions.
+Certification programs included.`,
     },
     {
+      id: 3,
       icon: "💻",
       bg: "rgba(125,255,107,0.09)",
       title: "Online Certification & Internships",
       desc: "Structured online programs with mentor-led sessions, hands-on projects, and industry-recognized certification. Learn anytime, anywhere.",
+      more: `Flexible learning platform with recorded sessions.
+Hands-on assignments and real-world projects.
+Internship opportunities provided.
+Industry-recognized certification.
+Continuous mentor support.`,
     },
     {
+      id: 4,
       icon: "🏭",
       bg: "rgba(255,209,102,0.09)",
       title: "CSR Lab Implementation",
       desc: "Complete CSR-funded lab setup with impact reporting, cost-per-beneficiary data, and measurable learning outcomes for corporate partners.",
+      more: `CSR-based education lab deployment.
+Impact tracking and reporting system.
+Schedule VII compliance support.
+Cost-effective implementation.
+Long-term sustainability and monitoring.`,
     },
     {
+      id: 5,
       icon: "📋",
       bg: "rgba(168,85,247,0.09)",
       title: "Teacher Training & Certification",
       desc: "Two-level certification program that makes teachers independently capable of delivering IoT and Robotics education without external support.",
+      more: `Hands-on teacher training programs.
+Certification with practical evaluation.
+Teaching resources and lesson plans.
+Independent lab management training.
+Ongoing mentoring support.`,
     },
     {
+      id: 6,
       icon: "🔧",
       bg: "rgba(255,92,135,0.09)",
       title: "Custom Hardware & R&D Solutions",
       desc: "Made-in-India development boards and educational kits. Custom IoT and embedded system design for institutions and government programs.",
+      more: `Custom IoT hardware development.
+Embedded system design solutions.
+Prototype and product development.
+Support for institutions and startups.
+Reliable and scalable systems.`,
     },
   ];
 
   return (
     <section className="services-section" id="services">
       <div className="section-tag">Our Programs</div>
+
       <div
         style={{
           display: "flex",
@@ -226,6 +269,7 @@ function Services() {
           <br />
           <span style={{ color: "var(--teal)" }}>One partner.</span>
         </h2>
+
         <p className="section-sub" style={{ marginBottom: 0 }}>
           From lab design to curriculum delivery — we handle it all.
         </p>
@@ -233,13 +277,37 @@ function Services() {
 
       <div className="services-grid">
         {SERVICES.map((s) => (
-          <div className="service-card" key={s.title}>
+          <div className="service-card" key={s.id}>
             <div className="service-icon" style={{ background: s.bg }}>
               {s.icon}
             </div>
+
             <h3>{s.title}</h3>
+
+            {/* 🔒 ORIGINAL TEXT (UNCHANGED) */}
             <p>{s.desc}</p>
-            <div className="service-arrow">Learn more →</div>
+
+            {/* 🔘 BUTTON */}
+            <div
+              className="service-arrow"
+              style={{ cursor: "pointer", color: "#00FFC6" }}
+              onClick={() => toggle(s.id)}
+            >
+              {openCard === s.id ? "Show Less ↑" : "Learn more →"}
+            </div>
+
+            {/* 🔽 EXTRA DESCRIPTION ONLY */}
+            {openCard === s.id && (
+  <div style={{ marginTop: "10px", color: "#aaa", textAlign: "justify" }}>
+    <ul style={{ paddingLeft: "18px", margin: 0 }}>
+      {s.more.split("\n").map((line, i) => (
+        <li key={i} style={{ marginBottom: "4px" }}>
+          {line}
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
           </div>
         ))}
       </div>
@@ -298,7 +366,7 @@ function Products() {
       emoji: "⚡",
       image: "/images/products/lite-kit.jpg",
       label: "STARTER",
-      name: "IobiT IoT Lite Kit",
+      name: "ARC Lab's IoT Lite Kit",
       desc: "Beginner IoT development board with Arduino & ESP32 support. Includes essential sensors for classroom learning.",
       tags: ["Arduino", "ESP32", "IoT Basics"],
     },
@@ -306,7 +374,7 @@ function Products() {
       emoji: "🚀",
       image: "/images/products/pro-kit.jpg",
       label: "PRO",
-      name: "IobiT IoT Pro Kit",
+      name: "ARC Lab's IoT Pro Kit",
       desc: "Advanced IoT and Embedded Systems board. Features Raspberry Pi & ESP32, industrial sensors, and cloud connectivity.",
       tags: ["Raspberry Pi", "ESP32", "Cloud IoT"],
     },
@@ -323,7 +391,7 @@ function Products() {
     <section className="products-section" id="products">
       <div className="products-header">
         <div>
-          <div className="section-tag">IobiT Hardware — by ARC LABS</div>
+          <div className="section-tag">ARC Lab's Hardware — by ARC LABS</div>
           <h2 className="section-title">
             Made-in-India.
             <br />
@@ -381,7 +449,7 @@ function Packages() {
       period: "one-time setup",
       featured: false,
       features: [
-        { text: "IobiT IoT Lite Kit (15 units)", hi: false },
+        { text: "ARC Lab's IoT Lite Kit (15 units)", hi: false },
         { text: "NEP 2020 aligned curriculum — Level 1", hi: false },
         { text: "2-day teacher onsite training", hi: false },
         { text: "Lab branding & installation", hi: false },
@@ -396,7 +464,7 @@ function Packages() {
       period: "one-time setup",
       featured: true,
       features: [
-        { text: "IobiT IoT Pro Kit (20 units)", hi: false },
+        { text: "ARC Lab's IoT Pro Kit (20 units)", hi: false },
         { text: "Full curriculum — Levels 1 & 2", hi: false },
         { text: "3-day teacher certification program", hi: false },
         { text: "Complete lab installation & branding", hi: false },

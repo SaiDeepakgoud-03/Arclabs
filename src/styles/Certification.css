@@ -1567,3 +1567,37 @@ body::before {
     transform: translateY(-5px);
   }
 }
+/* 🔥 FORM FONT FIX (REGISTER PAGE) */
+
+.cert-inp {
+  font-family: "DM Sans", sans-serif !important;  /* clean input text */
+  font-size: 0.9rem;
+  letter-spacing: 0;   /* remove uppercase spacing */
+  text-transform: none; /* remove forced uppercase */
+}
+
+/* Labels above fields */
+label {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--mist);
+  margin-bottom: 4px;
+}
+
+/* Section title */
+.vcard-title {
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+/* Sub text */
+.vcard-sub {
+  font-size: 0.88rem;
+}
+
+/* Button */
+.btn-v {
+  font-size: 0.92rem;
+  font-weight: 600;
+}

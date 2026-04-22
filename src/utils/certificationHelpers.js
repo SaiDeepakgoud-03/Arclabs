@@ -6,19 +6,30 @@ import {
 } from "../data/certificationConstants.js";
 
 /* ═══════════════════════════════════════ HELPERS ═══════════════════════════════════════ */
+
+// ✅ UPDATED CERTIFICATE ID GENERATOR
 export function genCertId() {
-  return (
-    "ARC" +
-    Math.random().toString(36).substring(2, 6).toUpperCase() +
-    Math.random().toString(36).substring(2, 4).toUpperCase()
-  );
+  // Get last 2 digits of current year
+  const year = new Date().getFullYear().toString().slice(-2);
+
+  // Generate 4 random characters
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let randomPart = "";
+
+  for (let i = 0; i < 4; i++) {
+    randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return `ARC${year}${randomPart}`;
 }
 
+// 🔍 PIN LOOKUP (LOCAL)
 export function lookupPin(pin) {
   const p = parseInt(pin.substring(0, 3));
   return PIN_MAP[p] || null;
 }
 
+// 📅 FORMAT DATE
 export function fmtDate(d) {
   if (!d) return "—";
   const [y, m, dy] = d.split("-");
@@ -30,15 +41,18 @@ export function fmtDate(d) {
   });
 }
 
+// 🧠 SKILLS BASED ON TECH & DAYS
 export function getSkills(tech, days) {
   const base = SKILLS_MAP[tech] || [];
   return days >= 5 ? base : base.slice(0, days + 2);
 }
 
+// 🧩 GET TECHNOLOGY OBJECT
 export function getTechObj(id) {
   return TECHNOLOGIES.find((t) => t.id === id) || TECHNOLOGIES[0];
 }
 
+// 📘 DURATION LABEL
 export function getDurLabel(days) {
   if (days === 2) return "2-Day Workshop";
   if (days === 3) return "3-Day Intensive";
@@ -46,6 +60,7 @@ export function getDurLabel(days) {
   return `${days}-Day Program`;
 }
 
+// ⏱ HOURS CALCULATION
 export function getHours(days) {
   if (days === 2) return "14 hrs";
   if (days === 3) return "21 hrs";
@@ -54,35 +69,36 @@ export function getHours(days) {
 }
 
 /**
- * Fetch city & state from India Post API, fallback to local map
+ * 🌐 Fetch city & state from API + fallback
  */
 export async function fetchPincode(pin) {
   try {
     const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
     const data = await res.json();
+
     if (data[0]?.Status === "Success" && data[0]?.PostOffice?.length > 0) {
       const po = data[0].PostOffice[0];
-      return { city: po.District || po.Block || po.Name, state: po.State };
+      return {
+        city: po.District || po.Block || po.Name,
+        state: po.State,
+      };
     }
   } catch (_) {
-    /* fallback */
+    // fallback
   }
-  // Fallback to local map
+
+  // fallback local
   const p = parseInt(pin.substring(0, 3));
   const entry = PIN_MAP[p];
   return entry ? { city: entry.c, state: entry.s } : null;
 }
 
-/**
- * Get grade from performance rating
- */
+// 🏆 GRADE FROM PERFORMANCE
 export function getGrade(performance) {
   return PERFORMANCE_GRADES[performance] || "B";
 }
 
-/**
- * Copy text to clipboard, returns true on success
- */
+// 📋 COPY TO CLIPBOARD
 export async function copyToClipboard(text) {
   try {
     await navigator.clipboard.writeText(text);
@@ -92,7 +108,8 @@ export async function copyToClipboard(text) {
   }
 }
 
-/* ═══════════════════════════════════════ FUNCTION ALIASES (RegisterPanel compatibility) ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════ FUNCTION ALIASES ═══════════════════════════════════════ */
+
 export const generateCertId = genCertId;
 export const localPincodeLookup = lookupPin;
 export const getSkillsForCert = getSkills;

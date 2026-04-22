@@ -651,7 +651,7 @@ const PACKAGES = {
       features: [
         {
           icon: "",
-          title: "IobiT IoT Lite Kit × 15 units",
+          title: "ARC Lab's IoT Lite Kit × 15 units",
           detail: "Arduino + ESP32, sensors, relay — all essentials",
         },
         {
@@ -703,7 +703,7 @@ const PACKAGES = {
       features: [
         {
           icon: "",
-          title: "IobiT IoT Pro Kit × 20 units",
+          title: "ARC Lab's IoT Pro Kit × 20 units",
           detail: "Raspberry Pi + ESP32, full sensor suite",
         },
         {
@@ -834,7 +834,7 @@ const PACKAGES = {
       features: [
         {
           icon: "",
-          title: "IobiT IoT Experience Kit × 20 units",
+          title: "ARC Lab's IoT Experience Kit × 20 units",
           detail: "5 MCU platforms, full sensor suite",
         },
         {
@@ -1005,7 +1005,7 @@ const INSIDE_ITEMS = {
       icon: "⚡",
       iconBg: "rgba(168,255,62,0.12)",
       iconColor: "#A8FF3E",
-      name: "IobiT Development Boards",
+      name: "ARC Lab's Development Boards",
       desc: "Made-in-India boards supporting Arduino, ESP32, STM32, Raspberry Pi — depending on package tier.",
       tag: "MADE IN INDIA",
       tagBg: "rgba(168,255,62,0.1)",

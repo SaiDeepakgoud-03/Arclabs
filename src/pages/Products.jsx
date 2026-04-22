@@ -929,7 +929,7 @@ function OrderModal({ product, onClose }) {
                     <strong style={{ color: product.color }}>
                       ₹{product.price.toLocaleString("en-IN")}
                     </strong>{" "}
-                    per unit · IobiT by ARC LABS
+                    per unit · ARC Lab's by ARC LABS
                   </div>
                 </div>
               </div>
@@ -1297,7 +1297,7 @@ function DetailDrawer({ product, onClose, onOrder }) {
       <div className="dd-cta">
         <div className="dd-cta-note">
           <strong>{product.short}</strong> · ₹
-          {product.price.toLocaleString("en-IN")} · Made in India · IobiT by ARC
+          {product.price.toLocaleString("en-IN")} · Made in India · ARC Lab's by ARC
           LABS
         </div>
         <div className="dd-cta-btns">
@@ -1484,7 +1484,7 @@ export default function ProductsPage() {
       <div className="ph-hero">
         <div className="ph-eyebrow">
           <span className="ph-edot" />
-          IobiT Hardware — by ARC LABS · Made in India
+          ARC Lab's Hardware — by ARC LABS · Made in India
         </div>
         <h1>
           Built for Real
@@ -1661,7 +1661,7 @@ export default function ProductsPage() {
       {/* FOOTER */}
       <div className="p-footer">
         <span>
-          © 2025 ARC LABS · IobiT Hardware · Made in India · MSME Registered,
+          © 2025 ARC LABS · ARC Lab's Hardware · Made in India · MSME Registered,
           Hyderabad
         </span>
         <span>hello@arclabs.in · +91 8699929532</span>
