@@ -862,202 +862,10 @@ const COMPARE_ROWS = [
 ];
 
 /* ─── ORDER MODAL ──────────────────────────────────────────────── */
-function OrderModal({ product, onClose }) {
-  const [qty, setQty] = useState(1);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    org: "",
-    city: "",
-    type: "",
-    note: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
 
-  const h = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
-  const submit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setDone(true);
-    }, 1500);
-  };
-  const total = (product.price * qty).toLocaleString("en-IN");
-
-  return (
-    <div
-      className="modal-overlay"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div className="modal">
-        <button className="modal-close" onClick={onClose}>
-          ✕
-        </button>
-        {done ? (
-          <div className="modal-success">
-            <div className="success-icon">🎉</div>
-            <h3>Order Enquiry Received!</h3>
-            <p>
-              Thank you! Our team will contact you within{" "}
-              <strong style={{ color: "#fff" }}>24 hours</strong> to confirm
-              your order for the{" "}
-              <strong style={{ color: "#fff" }}>{product.short}</strong> (×{qty}
-              ).
-              <br />
-              <br />
-              For faster processing, WhatsApp us:
-              <br />
-              <strong style={{ color: "#25D366" }}>+91 8699929532</strong>
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="modal-head">
-              <h3>Place Order Enquiry</h3>
-              <p>
-                Submit your details and we'll confirm stock, dispatch timeline,
-                and invoice within 24 hrs.
-              </p>
-              <div className="modal-product-sel">
-                <span className="mps-icon">{product.emoji}</span>
-                <div>
-                  <div className="mps-name">{product.short}</div>
-                  <div className="mps-price">
-                    <strong style={{ color: product.color }}>
-                      ₹{product.price.toLocaleString("en-IN")}
-                    </strong>{" "}
-                    per unit · ARC Lab's by ARC LABS
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={submit}>
-                <div className="form-row">
-                  <label>Quantity</label>
-                  <div className="qty-row">
-                    <button
-                      type="button"
-                      className="qty-btn"
-                      onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    >
-                      −
-                    </button>
-                    <span className="qty-val">{qty}</span>
-                    <button
-                      type="button"
-                      className="qty-btn"
-                      onClick={() => setQty((q) => q + 1)}
-                    >
-                      +
-                    </button>
-                    <span className="qty-total">
-                      Total: <strong>₹{total}</strong>
-                    </span>
-                  </div>
-                </div>
-                <div className="form-2">
-                  <div className="form-row">
-                    <label>Full Name *</label>
-                    <input
-                      name="name"
-                      value={form.name}
-                      onChange={h}
-                      placeholder="Your name"
-                      required
-                    />
-                  </div>
-                  <div className="form-row">
-                    <label>Phone *</label>
-                    <input
-                      name="phone"
-                      value={form.phone}
-                      onChange={h}
-                      placeholder="+91 XXXXX XXXXX"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <label>Email *</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={h}
-                    placeholder="you@example.com"
-                    required
-                  />
-                </div>
-                <div className="form-2">
-                  <div className="form-row">
-                    <label>Buyer Type</label>
-                    <select name="type" value={form.type} onChange={h}>
-                      <option value="">Select</option>
-                      <option>Individual / Student</option>
-                      <option>School / College</option>
-                      <option>Corporate / R&D Lab</option>
-                      <option>Government Institution</option>
-                      <option>CSR / NGO</option>
-                      <option>Reseller / Distributor</option>
-                    </select>
-                  </div>
-                  <div className="form-row">
-                    <label>City</label>
-                    <input
-                      name="city"
-                      value={form.city}
-                      onChange={h}
-                      placeholder="Your city"
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <label>Institution / Organization</label>
-                  <input
-                    name="org"
-                    value={form.org}
-                    onChange={h}
-                    placeholder="School, college, company name"
-                  />
-                </div>
-                <div className="form-row">
-                  <label>Additional Notes</label>
-                  <textarea
-                    name="note"
-                    value={form.note}
-                    onChange={h}
-                    placeholder="Bulk order discount enquiry, specific delivery requirements, GST invoice needed..."
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="form-submit"
-                  style={{ background: product.color }}
-                  disabled={loading}
-                >
-                  {loading
-                    ? "Placing Enquiry..."
-                    : `🛒 Enquire for ${qty > 1 ? `${qty} units · ₹${total}` : `₹${total}`}`}
-                </button>
-                <p className="form-note">
-                  Bulk orders (5+ units) qualify for institutional pricing.
-                  We'll confirm via WhatsApp or email.
-                </p>
-              </form>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /* ─── DETAIL DRAWER ──────────────────────────────────────────────── */
-function DetailDrawer({ product, onClose, onOrder }) {
+function DetailDrawer({ product, onClose }) {
   const [tab, setTab] = useState("specs");
   const ref = useRef(null);
 
@@ -1312,7 +1120,9 @@ function DetailDrawer({ product, onClose, onOrder }) {
           <button
             className="btn-g"
             style={{ background: product.color }}
-            onClick={() => onOrder(product)}
+            onClick={() =>
+  window.location.href = `/checkout?product=${product.id}&price=${product.price}`
+}
           >
             🛒 Order This Kit →
           </button>
@@ -1323,7 +1133,7 @@ function DetailDrawer({ product, onClose, onOrder }) {
 }
 
 /* ─── PRODUCT CARD ───────────────────────────────────────────────── */
-function ProductCard({ product, isSelected, onSelect, onOrder }) {
+function ProductCard({ product, isSelected, onSelect}) {
   return (
     <div
       className={`pcard${isSelected ? " selected" : ""}`}
@@ -1409,7 +1219,9 @@ function ProductCard({ product, isSelected, onSelect, onOrder }) {
         <button
           className="pc-btn-buy"
           style={{ background: product.color }}
-          onClick={() => onOrder(product)}
+          onClick={() =>
+  window.location.href = `/checkout?product=${product.id}&price=${product.price}`
+}
         >
           🛒 Order Now
         </button>
@@ -1421,7 +1233,6 @@ function ProductCard({ product, isSelected, onSelect, onOrder }) {
 /* ─── MAIN PAGE ──────────────────────────────────────────────────── */
 export default function ProductsPage() {
   const [selected, setSelected] = useState(null);
-  const [orderProduct, setOrderProduct] = useState(null);
   const [filter, setFilter] = useState("all");
 
   const handleSelect = (id) => setSelected((prev) => (prev === id ? null : id));
@@ -1472,7 +1283,9 @@ export default function ProductsPage() {
           </a>
           <button
             className="pnav-cart-btn"
-            onClick={() => setOrderProduct(PRODUCTS[1])}
+            onClick={() =>
+              window.location.href = `/checkout?product=${PRODUCTS[1].id}&price=${PRODUCTS[1].price}`
+}
           >
             🛒 Order a Kit
             <span className="cart-count">3</span>
@@ -1519,8 +1332,7 @@ export default function ProductsPage() {
               product={product}
               isSelected={selected === product.id}
               onSelect={handleSelect}
-              onOrder={setOrderProduct}
-            />
+/>
           ))}
         </div>
 
@@ -1530,8 +1342,7 @@ export default function ProductsPage() {
             key={selected}
             product={selectedProduct}
             onClose={() => setSelected(null)}
-            onOrder={setOrderProduct}
-          />
+/>
         )}
       </div>
 
@@ -1678,12 +1489,7 @@ export default function ProductsPage() {
       </a>
 
       {/* Order Modal */}
-      {orderProduct && (
-        <OrderModal
-          product={orderProduct}
-          onClose={() => setOrderProduct(null)}
-        />
-      )}
+      
     </>
   );
 }

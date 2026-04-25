@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/App.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Checkout from "./pages/Checkout";
 
 // Pages — lazy-loaded for performance
 const Home = lazy(() => import("./pages/Home"));
@@ -82,6 +83,7 @@ export default function App() {
             <Route path="/lab-packages" element={<LabPackages />} />
             <Route path="/csr-partners" element={<CSRPartners />} />
             <Route path="/verify" element={<Certification />} />
+            <Route path="/checkout" element={<Checkout />} />
             {/* 404 fallback */}
             <Route
               path="*"
