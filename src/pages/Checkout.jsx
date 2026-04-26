@@ -106,6 +106,16 @@ export default function Checkout() {
           product_id: productId,
         },
 
+        // ✅ Enable all payment methods including UPI
+        method: {
+          upi: true,
+          card: true,
+          netbanking: true,
+          wallet: true,
+          emandate: false,
+          emi: false,
+        },
+
         prefill: {
           name: form.name,
           email: form.email,
@@ -115,6 +125,10 @@ export default function Checkout() {
         theme: {
           color: "#00FFC6",
         },
+
+        // ✅ Mobile specific settings
+        recurring: false,
+        timeout: 600,
 
         modal: {
           ondismiss: function () {
