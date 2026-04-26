@@ -32,7 +32,7 @@ export default function Checkout() {
   useEffect(() => {
     console.log("📝 Loading Razorpay SDK...");
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.src = "https://checkout.razorpay.com/v1/checkout.js?v=2";
     script.async = true;
     script.onload = () => {
       console.log("✅ Razorpay SDK loaded successfully");
@@ -106,7 +106,7 @@ export default function Checkout() {
           product_id: productId,
         },
 
-        // ✅ Enable all payment methods - UPI with QR code
+        // ✅ Enable all payment methods - UPI with QR code AND manual entry
         method: {
           upi: true,
           card: true,
@@ -114,9 +114,9 @@ export default function Checkout() {
           wallet: true,
         },
 
-        // ✅ UPI specific settings with QR code
+        // ✅ UPI specific settings - Both QR scan and manual ID entry
         upi: {
-          flow: "qr", // Show QR code by default
+          flow: "collect", // Allow both QR code AND manual UPI ID entry
         },
 
         prefill: {
