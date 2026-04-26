@@ -83,3 +83,68 @@
 .pay-btn:hover {
   transform: scale(1.05);
 }
+
+.pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: scale(1);
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .checkout-page {
+    padding: 80px 20px;
+    min-height: auto;
+  }
+
+  .checkout-card {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .checkout-left {
+    order: 2;
+  }
+
+  .checkout-left img {
+    max-width: 150px;
+    margin: 0 auto;
+  }
+
+  .checkout-left h2 {
+    font-size: 18px;
+  }
+
+  .price {
+    font-size: 18px;
+  }
+
+  .checkout-right {
+    order: 1;
+  }
+
+  .checkout-right h3 {
+    font-size: 16px;
+  }
+
+  .checkout-right input {
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .pay-btn {
+    padding: 14px;
+    font-size: 16px;
+    margin-top: 5px;
+  }
+
+  .pay-btn:hover {
+    transform: scale(1);
+  }
+
+  .pay-btn:active {
+    transform: scale(0.98);
+  }
+}
