@@ -11,7 +11,11 @@ export default function Checkout() {
   const productId = query.get("product");
   const price = query.get("price");
 
+  console.log("🔍 Checkout page loaded with:", { productId, price });
+
   const product = PRODUCTS.find((p) => p.id === productId);
+
+  console.log("🔍 Product found:", product);
 
   // ✅ FORM STATE
   const [form, setForm] = useState({
@@ -26,11 +30,12 @@ export default function Checkout() {
 
   // ✅ Load Razorpay on component mount
   useEffect(() => {
+    console.log("📝 Loading Razorpay SDK...");
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     script.onload = () => {
-      console.log("✅ Razorpay SDK loaded");
+      console.log("✅ Razorpay SDK loaded successfully");
       setRazorpayLoaded(true);
     };
     script.onerror = () => {
@@ -46,35 +51,50 @@ export default function Checkout() {
     };
   }, []);
 
-  // ✅ PAYMENT FUNCTION - Mobile Optimized
+  // ✅ PAYMENT FUNCTION - Mobile Optimized with Better Debugging
   const handlePayment = async () => {
+    console.log("🛒 Payment handler called");
+
     // ✅ Validate form
     if (!form.name || !form.email || !form.phone || !form.city) {
-      alert("Please fill all details");
+      console.warn("❌ Form incomplete:", form);
+      alert("⚠️ Please fill all details");
       return;
     }
 
     if (!price || !product) {
-      alert("Invalid product or price");
+      console.error("❌ Missing product or price:", { price, product });
+      alert("❌ Invalid product or price. Please go back and try again.");
       return;
     }
 
     if (!razorpayLoaded) {
-      alert("Payment system loading... Please wait a moment and try again.");
+      console.warn("❌ Razorpay not loaded yet");
+      alert("⏳ Payment system loading... Please wait a moment and try again.");
       return;
     }
 
     if (!window.Razorpay) {
-      alert("Razorpay SDK not available. Please check your internet connection.");
+      console.error("❌ Razorpay SDK not available");
+      alert("❌ Razorpay SDK not available. Please check your internet connection.");
       return;
     }
 
     setLoading(true);
+    console.log("⏳ Processing payment...");
 
     try {
+      const amountInPaisa = Math.round(Number(price) * 100);
+      
+      console.log("💰 Payment details:", {
+        amount: amountInPaisa,
+        productId,
+        productName: product.name,
+      });
+
       const options = {
         key: "rzp_live_RpqmHVVJcg5JMQ",
-        amount: Math.round(Number(price) * 100), // Ensure proper amount format
+        amount: amountInPaisa,
         currency: "INR",
         name: "ARC LABS",
         description: `Purchase: ${product.name}`,
@@ -83,6 +103,7 @@ export default function Checkout() {
           customer_email: form.email,
           customer_phone: form.phone,
           customer_city: form.city,
+          product_id: productId,
         },
 
         prefill: {
@@ -95,26 +116,25 @@ export default function Checkout() {
           color: "#00FFC6",
         },
 
-        // ✅ Mobile responsive config
         modal: {
           ondismiss: function () {
-            console.log("Payment modal closed");
+            console.log("Payment modal closed by user");
             setLoading(false);
-            alert("Payment cancelled. Please try again.");
+            alert("💳 Payment cancelled. Please try again.");
           },
           escape: false,
           backdropclose: false,
         },
 
-        // ✅ Success callback
         handler: function (response) {
           console.log("✅ Payment successful:", response);
           setLoading(false);
 
-          alert(`✅ Payment Successful!\n\nPayment ID: ${response.razorpay_payment_id}\n\nThank you for your purchase!`);
+          alert(
+            `✅ Payment Successful!\n\nPayment ID: ${response.razorpay_payment_id}\n\nThank you for your purchase!`
+          );
 
-          // Log order details
-          console.log("Order Details:", {
+          console.log("📋 Order Details:", {
             name: form.name,
             email: form.email,
             phone: form.phone,
@@ -124,21 +144,18 @@ export default function Checkout() {
             paymentId: response.razorpay_payment_id,
           });
 
-          // Reset form
           setForm({ name: "", email: "", phone: "", city: "" });
 
-          // Redirect after 2 seconds
           setTimeout(() => {
             navigate("/products");
           }, 2000);
         },
       };
 
-      console.log("Opening Razorpay with options:", options);
+      console.log("🔑 Razorpay options configured, opening modal...");
 
       const rzp = new window.Razorpay(options);
 
-      // ✅ Handle payment errors
       rzp.on("payment.failed", function (response) {
         console.error("❌ Payment failed:", response.error);
         setLoading(false);
@@ -147,11 +164,10 @@ export default function Checkout() {
         );
       });
 
-      // Open payment modal
       rzp.open();
 
     } catch (err) {
-      console.error("❌ Payment error:", err);
+      console.error("❌ Payment error caught:", err);
       setLoading(false);
       alert(
         "❌ Payment Error: " +
