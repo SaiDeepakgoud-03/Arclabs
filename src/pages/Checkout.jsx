@@ -11,13 +11,8 @@ export default function Checkout() {
   const productId = query.get("product");
   const price = query.get("price");
 
-  console.log("🔍 Checkout page loaded with:", { productId, price });
-
   const product = PRODUCTS.find((p) => p.id === productId);
 
-  console.log("🔍 Product found:", product);
-
-  // ✅ FORM STATE
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -28,18 +23,15 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
-  // ✅ Load Razorpay on component mount
+  // Load Razorpay SDK
   useEffect(() => {
-    console.log("📝 Loading Razorpay SDK...");
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js?v=2";
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     script.onload = () => {
-      console.log("✅ Razorpay SDK loaded successfully");
       setRazorpayLoaded(true);
     };
     script.onerror = () => {
-      console.error("❌ Failed to load Razorpay SDK");
       setRazorpayLoaded(false);
     };
     document.body.appendChild(script);
@@ -51,46 +43,32 @@ export default function Checkout() {
     };
   }, []);
 
-  // ✅ PAYMENT FUNCTION - Mobile Optimized with Better Debugging
-  const handlePayment = async () => {
-    console.log("🛒 Payment handler called");
-
-    // ✅ Validate form
+  // Payment handler
+  const handlePayment = () => {
     if (!form.name || !form.email || !form.phone || !form.city) {
-      console.warn("❌ Form incomplete:", form);
       alert("⚠️ Please fill all details");
       return;
     }
 
     if (!price || !product) {
-      console.error("❌ Missing product or price:", { price, product });
-      alert("❌ Invalid product or price. Please go back and try again.");
+      alert("❌ Invalid product or price");
       return;
     }
 
     if (!razorpayLoaded) {
-      console.warn("❌ Razorpay not loaded yet");
-      alert("⏳ Payment system loading... Please wait a moment and try again.");
+      alert("Payment system loading...");
       return;
     }
 
     if (!window.Razorpay) {
-      console.error("❌ Razorpay SDK not available");
-      alert("❌ Razorpay SDK not available. Please check your internet connection.");
+      alert("Razorpay not available");
       return;
     }
 
     setLoading(true);
-    console.log("⏳ Processing payment...");
 
     try {
       const amountInPaisa = Math.round(Number(price) * 100);
-      
-      console.log("💰 Payment details:", {
-        amount: amountInPaisa,
-        productId,
-        productName: product.name,
-      });
 
       const options = {
         key: "rzp_live_RpqmHVVJcg5JMQ",
@@ -106,17 +84,12 @@ export default function Checkout() {
           product_id: productId,
         },
 
-        // ✅ Enable all payment methods - UPI with QR code AND manual entry
+        // Enable all payment methods
         method: {
           upi: true,
           card: true,
           netbanking: true,
           wallet: true,
-        },
-
-        // ✅ UPI specific settings - Both QR scan and manual ID entry
-        upi: {
-          flow: "collect", // Allow both QR code AND manual UPI ID entry
         },
 
         prefill: {
@@ -127,109 +100,43 @@ export default function Checkout() {
 
         theme: {
           color: "#00FFC6",
-          hide_topbar: false,
         },
-
-        // ✅ Mobile specific settings
-        recurring: false,
-        timeout: 600,
-        loadingText: "Processing your payment...",
 
         modal: {
           ondismiss: function () {
-            console.log("Payment modal closed by user");
             setLoading(false);
-            alert("💳 Payment cancelled. Please try again.");
+            alert("Payment cancelled");
           },
-          escape: false,
-          backdropclose: false,
         },
 
         handler: function (response) {
-          console.log("✅ Payment successful:", response);
           setLoading(false);
-
-          // ✅ Handle both UPI and card payments
-          const paymentId = response.razorpay_payment_id;
-          const orderId = response.razorpay_order_id || "N/A";
-
           alert(
-            `✅ Payment Successful!\n\nPayment ID: ${paymentId}\n\nThank you for your purchase!`
+            `✅ Payment Successful!\n\nPayment ID: ${response.razorpay_payment_id}`
           );
-
-          console.log("📋 Order Details:", {
-            name: form.name,
-            email: form.email,
-            phone: form.phone,
-            city: form.city,
-            product: product.name,
-            price: price,
-            paymentId: paymentId,
-            orderId: orderId,
-            timestamp: new Date().toISOString(),
-          });
-
-          // Reset form
           setForm({ name: "", email: "", phone: "", city: "" });
-
-          // Redirect after 2 seconds
           setTimeout(() => {
             navigate("/products", { replace: true });
           }, 2000);
         },
 
-        // ✅ Handle payment timeout
         timeoutNotification: function () {
-          console.warn("⏰ Payment timeout");
           setLoading(false);
-          alert(
-            "⏰ Payment request timed out. Please try again or use a different payment method."
-          );
+          alert("Payment timeout. Please try again.");
         },
       };
 
-      console.log("🔑 Razorpay options configured, opening modal...");
-
       const rzp = new window.Razorpay(options);
 
-      // ✅ Handle payment errors - Specific for UPI
       rzp.on("payment.failed", function (response) {
-        console.error("❌ Payment failed:", response.error);
         setLoading(false);
-        
-        let errorMessage = response.error.reason || "Unknown error";
-        
-        // Specific UPI error handling
-        if (response.error.code === "BAD_REQUEST_ERROR") {
-          errorMessage = "UPI request failed. Please check your UPI ID and try again.";
-        } else if (response.error.code === "GATEWAY_ERROR") {
-          errorMessage = "Payment gateway error. Please try again.";
-        } else if (response.error.code === "RATE_LIMIT_ERROR") {
-          errorMessage = "Too many attempts. Please try again in a few moments.";
-        }
-        
-        alert(
-          `❌ Payment Failed\n\nError: ${errorMessage}\n\nPlease try again or use a different payment method.`
-        );
+        alert("Payment failed: " + response.error.reason);
       });
 
-      // ✅ Open payment modal with better error handling
-      console.log("🎯 Opening Razorpay payment modal...");
-      try {
-        rzp.open();
-      } catch (error) {
-        console.error("❌ Error opening payment modal:", error);
-        setLoading(false);
-        alert("❌ Error opening payment modal. Please try again.");
-      }
-
+      rzp.open();
     } catch (err) {
-      console.error("❌ Payment error caught:", err);
       setLoading(false);
-      alert(
-        "❌ Payment Error: " +
-          (err.message || "Something went wrong. Please try again.")
-      );
+      alert("Payment Error: " + err.message);
     }
   };
 
