@@ -106,14 +106,17 @@ export default function Checkout() {
           product_id: productId,
         },
 
-        // ✅ Enable all payment methods including UPI
+        // ✅ Enable all payment methods - UPI with QR code
         method: {
           upi: true,
           card: true,
           netbanking: true,
           wallet: true,
-          emandate: false,
-          emi: false,
+        },
+
+        // ✅ UPI specific settings with QR code
+        upi: {
+          flow: "qr", // Show QR code by default
         },
 
         prefill: {
@@ -124,11 +127,13 @@ export default function Checkout() {
 
         theme: {
           color: "#00FFC6",
+          hide_topbar: false,
         },
 
         // ✅ Mobile specific settings
         recurring: false,
         timeout: 600,
+        loadingText: "Processing your payment...",
 
         modal: {
           ondismiss: function () {
@@ -144,8 +149,12 @@ export default function Checkout() {
           console.log("✅ Payment successful:", response);
           setLoading(false);
 
+          // ✅ Handle both UPI and card payments
+          const paymentId = response.razorpay_payment_id;
+          const orderId = response.razorpay_order_id || "N/A";
+
           alert(
-            `✅ Payment Successful!\n\nPayment ID: ${response.razorpay_payment_id}\n\nThank you for your purchase!`
+            `✅ Payment Successful!\n\nPayment ID: ${paymentId}\n\nThank you for your purchase!`
           );
 
           console.log("📋 Order Details:", {
@@ -155,14 +164,27 @@ export default function Checkout() {
             city: form.city,
             product: product.name,
             price: price,
-            paymentId: response.razorpay_payment_id,
+            paymentId: paymentId,
+            orderId: orderId,
+            timestamp: new Date().toISOString(),
           });
 
+          // Reset form
           setForm({ name: "", email: "", phone: "", city: "" });
 
+          // Redirect after 2 seconds
           setTimeout(() => {
-            navigate("/products");
+            navigate("/products", { replace: true });
           }, 2000);
+        },
+
+        // ✅ Handle payment timeout
+        timeoutNotification: function () {
+          console.warn("⏰ Payment timeout");
+          setLoading(false);
+          alert(
+            "⏰ Payment request timed out. Please try again or use a different payment method."
+          );
         },
       };
 
@@ -170,15 +192,36 @@ export default function Checkout() {
 
       const rzp = new window.Razorpay(options);
 
+      // ✅ Handle payment errors - Specific for UPI
       rzp.on("payment.failed", function (response) {
         console.error("❌ Payment failed:", response.error);
         setLoading(false);
+        
+        let errorMessage = response.error.reason || "Unknown error";
+        
+        // Specific UPI error handling
+        if (response.error.code === "BAD_REQUEST_ERROR") {
+          errorMessage = "UPI request failed. Please check your UPI ID and try again.";
+        } else if (response.error.code === "GATEWAY_ERROR") {
+          errorMessage = "Payment gateway error. Please try again.";
+        } else if (response.error.code === "RATE_LIMIT_ERROR") {
+          errorMessage = "Too many attempts. Please try again in a few moments.";
+        }
+        
         alert(
-          `❌ Payment Failed\n\nError: ${response.error.reason || "Unknown error"}\n\nPlease try again or contact support.`
+          `❌ Payment Failed\n\nError: ${errorMessage}\n\nPlease try again or use a different payment method.`
         );
       });
 
-      rzp.open();
+      // ✅ Open payment modal with better error handling
+      console.log("🎯 Opening Razorpay payment modal...");
+      try {
+        rzp.open();
+      } catch (error) {
+        console.error("❌ Error opening payment modal:", error);
+        setLoading(false);
+        alert("❌ Error opening payment modal. Please try again.");
+      }
 
     } catch (err) {
       console.error("❌ Payment error caught:", err);
